@@ -17,33 +17,17 @@ import {
   AlertTriangle
 } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
-
-  // Mock user data
-  const userData = {
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    phone: '+94 77 123 4567',
-    profileImage: 'https://randomuser.me/api/portraits/men/32.jpg',
-    memberSince: 'January 2023',
-    totalTrips: 24,
-    savedRoutes: 8
-  };
+  const { user, signOut } = useAuth();
 
   // Handle logout action
-  const handleLogout = () => {
-    // Here you would implement actual logout logic:
-    // - Clear authentication tokens
-    // - Clear user data from local storage
-    // - Reset any app state
-    
-    // Close the modal
+  const handleLogout = async () => {
+    await signOut();
     setIsLogoutModalVisible(false);
-    
-    // Navigate to login screen or home screen
     router.replace('/auth/login');
   };
 
@@ -72,7 +56,7 @@ export default function ProfileScreen() {
       title: 'Favorite Routes',
       icon: <Heart size={20} color="#004CFF" />,
       route: '/profile/favorites',
-      badge: userData.savedRoutes
+      badge: user?.savedRoutes
     },
     {
       id: 'notifications',
@@ -106,6 +90,35 @@ export default function ProfileScreen() {
     }
   ];
 
+  // Add a function to map image paths to require statements
+  const getProfileImage = (imagePath: string | undefined) => {
+    if (!imagePath) return require('@/assets/users/kavinda.png');
+    
+    // Map each possible image path to its require statement
+    switch (imagePath) {
+      case '/assets/users/kavinda.png':
+      case '@/assets/users/kavinda.png':
+        return require('@/assets/users/kavinda.png');
+      case '/assets/users/manusha.png':
+      case '@/assets/users/manusha.png':
+        return require('@/assets/users/manusha.png');
+      case '/assets/users/nadun.png':
+      case '@/assets/users/nadun.png':
+        return require('@/assets/users/nadun.png');
+      case '/assets/users/nethmi.png':
+      case '@/assets/users/nethmi.png':
+        return require('@/assets/users/nethmi.png');
+      case '/assets/users/chamudi.png':
+      case '@/assets/users/chamudi.png':
+        return require('@/assets/users/chamudi.png');
+      case '/assets/users/ishan.png':
+      case '@/assets/users/ishan.png':
+        return require('@/assets/users/ishan.png');
+      default:
+        return require('@/assets/users/kavinda.png');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
@@ -128,13 +141,13 @@ export default function ProfileScreen() {
         {/* Profile Card */}
         <View style={styles.profileCard}>
           <Image 
-            source={{ uri: userData.profileImage }} 
+            source={getProfileImage(user?.profileImage)}
             style={styles.profileImage} 
           />
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{userData.name}</Text>
-            <Text style={styles.profileDetail}>{userData.phone}</Text>
-            <Text style={styles.profileDetail}>{userData.email}</Text>
+            <Text style={styles.profileName}>{user?.name}</Text>
+            <Text style={styles.profileDetail}>{user?.phone}</Text>
+            <Text style={styles.profileDetail}>{user?.email}</Text>
           </View>
           <TouchableOpacity 
             style={styles.editButton}
@@ -147,17 +160,17 @@ export default function ProfileScreen() {
         {/* Stats Card */}
         <View style={styles.statsCard}>
           <View style={[styles.statItem, { flex: 2 }]}>
-            <Text style={styles.statValue}>{userData.totalTrips}</Text>
+            <Text style={styles.statValue}>{user?.totalTrips || 0}</Text>
             <Text style={styles.statLabel}>Total Trips</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={[styles.statItem, { flex: 2 }]}>
-            <Text style={styles.statValue}>{userData.savedRoutes}</Text>
+            <Text style={styles.statValue}>{user?.savedRoutes || 0}</Text>
             <Text style={styles.statLabel}>Saved Routes</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={[styles.statItem, { flex: 3 }]}>
-            <Text style={styles.statValue}>{userData.memberSince}</Text>
+            <Text style={styles.statValue}>{user?.memberSince || 'New User'}</Text>
             <Text style={styles.statLabel}>Member Since</Text>
           </View>
         </View>

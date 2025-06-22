@@ -25,10 +25,12 @@ import {
   ArrowUp, 
   ArrowDown
 } from 'lucide-react-native';
+import { useAuth } from '@/context/AuthContext';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const { user } = useAuth();
   
   // Mock data for dashboard
   const upcomingTrip = {
@@ -93,7 +95,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Good Morning</Text>
-          <Text style={styles.username}>John Doe</Text>
+          <Text style={styles.username}>{user?.name ?? 'John Doe'}</Text>
         </View>
         <TouchableOpacity 
           style={styles.notificationButton}

@@ -11,7 +11,7 @@ export default function Onboarding3Screen() {
       <View className="flex-1 px-6 py-8">
         <View className="items-end mb-8">
           <TouchableOpacity
-            onPress={() => router.push('/(tabs)')}
+            onPress={() => router.push('/auth/login')}
             className="px-4 py-2"
           >
             <Text className="text-gray-500 text-base">Skip</Text>

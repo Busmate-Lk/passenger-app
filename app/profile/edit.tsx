@@ -13,20 +13,22 @@ import {
   ChevronRight
 } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useAuth } from '@/context/AuthContext';
 
 export default function EditProfileScreen() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
   
-  // Mock user data
+  // Initialize form with user data or defaults
   const [formData, setFormData] = useState({
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    phone: '+94 77 123 4567',
-    dob: '15/05/1990',
-    address: '123 Main Street, Colombo',
-    city: 'Colombo',
-    profileImage: 'https://randomuser.me/api/portraits/men/32.jpg',
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    dob: user?.dob || '',
+    address: user?.address || '',
+    city: user?.city || '',
+    profileImage: user?.profileImage || 'https://randomuser.me/api/portraits/men/32.jpg',
   });
 
   const handleChange = (field, value) => {
@@ -59,6 +61,35 @@ export default function EditProfileScreen() {
     );
   };
 
+  // Add a function to map image paths to require statements
+  const getProfileImage = (imagePath: string | undefined) => {
+    if (!imagePath) return require('@/assets/users/kavinda.png');
+    
+    // Map each possible image path to its require statement
+    switch (imagePath) {
+      case '/assets/users/kavinda.png':
+      case '@/assets/users/kavinda.png':
+        return require('@/assets/users/kavinda.png');
+      case '/assets/users/manusha.png':
+      case '@/assets/users/manusha.png':
+        return require('@/assets/users/manusha.png');
+      case '/assets/users/nadun.png':
+      case '@/assets/users/nadun.png':
+        return require('@/assets/users/nadun.png');
+      case '/assets/users/nethmi.png':
+      case '@/assets/users/nethmi.png':
+        return require('@/assets/users/nethmi.png');
+      case '/assets/users/chamudi.png':
+      case '@/assets/users/chamudi.png':
+        return require('@/assets/users/chamudi.png');
+      case '/assets/users/ishan.png':
+      case '@/assets/users/ishan.png':
+        return require('@/assets/users/ishan.png');
+      default:
+        return require('@/assets/users/kavinda.png');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
@@ -79,7 +110,7 @@ export default function EditProfileScreen() {
         {/* Profile Image Section */}
         <View style={styles.photoSection}>
           <Image 
-            source={{ uri: formData.profileImage }} 
+            source={getProfileImage(user?.profileImage)}
             style={styles.profileImage} 
           />
           <TouchableOpacity 

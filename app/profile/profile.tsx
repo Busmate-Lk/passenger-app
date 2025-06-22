@@ -12,20 +12,61 @@ import {
   Edit2
 } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ProfileInfoScreen() {
   const router = useRouter();
+  const { user } = useAuth();
 
-  // Mock user data
-  const userData = {
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    phone: '+94 77 123 4567',
-    dob: '15/05/1990',
-    address: '123 Main Street, Colombo',
-    city: 'Colombo',
-    profileImage: 'https://randomuser.me/api/portraits/men/32.jpg',
-    memberSince: 'January 2023',
+  // Fallback if user is not loaded
+  if (!user) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="light" />
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <ArrowLeft size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Profile Information</Text>
+          <View style={{ width: 40 }} />
+        </View>
+        <View style={styles.content}>
+          <Text>Loading profile information...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Add a function to map image paths to require statements
+  const getProfileImage = (imagePath: string | undefined) => {
+    if (!imagePath) return require('@/assets/users/kavinda.png');
+    
+    // Map each possible image path to its require statement
+    switch (imagePath) {
+      case '/assets/users/kavinda.png':
+      case '@/assets/users/kavinda.png':
+        return require('@/assets/users/kavinda.png');
+      case '/assets/users/manusha.png':
+      case '@/assets/users/manusha.png':
+        return require('@/assets/users/manusha.png');
+      case '/assets/users/nadun.png':
+      case '@/assets/users/nadun.png':
+        return require('@/assets/users/nadun.png');
+      case '/assets/users/nethmi.png':
+      case '@/assets/users/nethmi.png':
+        return require('@/assets/users/nethmi.png');
+      case '/assets/users/chamudi.png':
+      case '@/assets/users/chamudi.png':
+        return require('@/assets/users/chamudi.png');
+      case '/assets/users/ishan.png':
+      case '@/assets/users/ishan.png':
+        return require('@/assets/users/ishan.png');
+      default:
+        return require('@/assets/users/kavinda.png');
+    }
   };
 
   return (
@@ -48,11 +89,11 @@ export default function ProfileInfoScreen() {
         {/* Profile Image Section */}
         <View style={styles.photoSection}>
           <Image 
-            source={{ uri: userData.profileImage }} 
+            source={getProfileImage(user?.profileImage)}
             style={styles.profileImage} 
           />
-          <Text style={styles.nameText}>{userData.name}</Text>
-          <Text style={styles.memberSinceText}>Member since {userData.memberSince}</Text>
+          <Text style={styles.nameText}>{user.name}</Text>
+          <Text style={styles.memberSinceText}>Member since {user.memberSince}</Text>
         </View>
 
         <View style={styles.infoCardContainer}>
@@ -66,7 +107,7 @@ export default function ProfileInfoScreen() {
             </View>
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>Full Name</Text>
-              <Text style={styles.infoValue}>{userData.name}</Text>
+              <Text style={styles.infoValue}>{user.name}</Text>
             </View>
           </View>
 
@@ -76,7 +117,7 @@ export default function ProfileInfoScreen() {
             </View>
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>Email Address</Text>
-              <Text style={styles.infoValue}>{userData.email}</Text>
+              <Text style={styles.infoValue}>{user.email}</Text>
             </View>
           </View>
 
@@ -86,7 +127,7 @@ export default function ProfileInfoScreen() {
             </View>
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>Phone Number</Text>
-              <Text style={styles.infoValue}>{userData.phone}</Text>
+              <Text style={styles.infoValue}>{user.phone}</Text>
             </View>
           </View>
 
@@ -96,7 +137,7 @@ export default function ProfileInfoScreen() {
             </View>
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>Date of Birth</Text>
-              <Text style={styles.infoValue}>{userData.dob}</Text>
+              <Text style={styles.infoValue}>{user.dob || 'Not provided'}</Text>
             </View>
           </View>
         </View>
@@ -111,7 +152,7 @@ export default function ProfileInfoScreen() {
             </View>
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>Address</Text>
-              <Text style={styles.infoValue}>{userData.address}</Text>
+              <Text style={styles.infoValue}>{user.address || 'Not provided'}</Text>
             </View>
           </View>
 
@@ -121,7 +162,7 @@ export default function ProfileInfoScreen() {
             </View>
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>City</Text>
-              <Text style={styles.infoValue}>{userData.city}</Text>
+              <Text style={styles.infoValue}>{user.city || 'Not provided'}</Text>
             </View>
           </View>
         </View>

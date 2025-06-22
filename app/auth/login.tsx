@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Eye, EyeOff } from 'lucide-react-native';
+import { useAuth } from '@/context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('kavinda@busmate.lk'); // Pre-filled for demo
+  const [password, setPassword] = useState('123'); // Pre-filled for demo
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { signIn, isLoading } = useAuth();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -16,13 +18,15 @@ export default function LoginScreen() {
       return;
     }
 
-    setIsLoading(true);
+    const success = await signIn(email, password);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    if (success) {
+      // Store onboarding completion
+      await AsyncStorage.setItem('hasCompletedOnboarding', 'true');
       router.replace('/(tabs)');
-    }, 2000);
+    } else {
+      Alert.alert('Login Failed', 'Invalid email or password');
+    }
   };
 
   return (

@@ -4,7 +4,7 @@
     "slug": "busmate-passenger-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/busmate-icon-inverted.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -30,6 +30,24 @@
         "projectId": "d39e07da-7ac8-472f-98b9-655719023213"
       }
     },
-    "owner": "kavindadimuthu"
+    "owner": "kavindadimuthu",
+    "splash": {
+      "image": "./assets/images/busmate-splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#004CFF"
+    },
+    "android": {
+      "package": "com.kavindadimuthu.busmatepassengerapp",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/busmate-icon-inverted.png",
+        "backgroundColor": "#004CFF"
+      },
+      "softwareKeyboardLayoutMode": "pan",
+      "statusBar": {
+        "backgroundColor": "#004CFF",
+        "barStyle": "light-content",
+        "translucent": false
+      }
+    }
   }
 }

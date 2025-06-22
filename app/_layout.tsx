@@ -10,6 +10,7 @@ import {
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
+import { AuthProvider } from '@/context/AuthContext';
 
 // Prevent auto-hiding of splash screen
 SplashScreen.preventAutoHideAsync();
@@ -35,7 +36,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <AuthProvider>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="onboarding/splash" />
         <Stack.Screen name="onboarding/language" />
@@ -43,8 +44,8 @@ export default function RootLayout() {
         <Stack.Screen name="onboarding/onboarding2" />
         <Stack.Screen name="onboarding/onboarding3" />
         <Stack.Screen name="auth/login" />
-        <Stack.Screen name="auth/signup" />
-        <Stack.Screen name="auth/otp" />
+        {/* <Stack.Screen name="auth/signup" /> */}
+        {/* <Stack.Screen name="auth/otp" /> */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="search" options={{ headerShown: false }} />
         <Stack.Screen name="tickets" options={{ headerShown: false }} />
@@ -52,10 +53,10 @@ export default function RootLayout() {
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen name="notifications" options={{ headerShown: false }} />
         <Stack.Screen name="tracking" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        {/* <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> */}
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
-    </>
+      <StatusBar style="light" backgroundColor="#004CFF" translucent={false} />
+    </AuthProvider>
   );
 }

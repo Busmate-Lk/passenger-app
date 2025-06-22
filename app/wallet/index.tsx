@@ -14,6 +14,7 @@ import {
   BellRing, 
   ChevronRight
 } from 'lucide-react-native';
+import { useAuth } from '@/context/AuthContext';
 
 // Custom Card SVG Component
 const TravelCardSVG = ({ balance, cardNumber, expiryDate, name, hidden }) => (
@@ -52,38 +53,15 @@ const TravelCardSVG = ({ balance, cardNumber, expiryDate, name, hidden }) => (
 export default function WalletScreen() {
   const router = useRouter();
   const [hideBalance, setHideBalance] = useState(false);
+  const { user } = useAuth();
   
-  // Mock wallet data
-  const walletData = {
-    balance: 1250.00,
-    cardNumber: '4218 7643 9875 1234',
-    expiryDate: '12/27',
-    name: 'JOHN DOE',
-    recentTransactions: [
-      {
-        id: '1',
-        type: 'topup',
-        amount: 500,
-        date: 'Today, 10:30 AM',
-        status: 'completed'
-      },
-      {
-        id: '2',
-        type: 'payment',
-        amount: 250,
-        date: 'Yesterday, 3:15 PM',
-        title: 'Bus Ticket - Colombo to Kandy',
-        status: 'completed'
-      },
-      {
-        id: '3',
-        type: 'payment',
-        amount: 180,
-        date: 'Jan 20, 2024',
-        title: 'Bus Ticket - Galle to Matara',
-        status: 'completed'
-      }
-    ]
+  // Use user's wallet data if available, or fallback to empty defaults
+  const walletData = user?.wallet || {
+    balance: 0,
+    cardNumber: '•••• •••• •••• ••••',
+    expiryDate: 'MM/YY',
+    name: 'GUEST USER',
+    recentTransactions: []
   };
 
   const getStatusColor = (status) => {
