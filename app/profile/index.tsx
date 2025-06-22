@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Image, StyleSheet, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  ArrowLeft, 
   ChevronRight, 
   User, 
   Settings, 
@@ -16,8 +15,8 @@ import {
   Star,
   AlertTriangle
 } from 'lucide-react-native';
-import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '@/context/AuthContext';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -121,21 +120,16 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>My Profile</Text>
-        <TouchableOpacity style={styles.settingsButton}>
-          <Settings size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+      {/* Replace custom header with AppHeader */}
+      <AppHeader 
+        title="My Profile" 
+        showBackButton={true}
+        rightElement={
+          <TouchableOpacity style={styles.settingsButton}>
+            <Settings size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView style={styles.content}>
         {/* Profile Card */}
@@ -279,27 +273,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   settingsButton: {
     width: 40,

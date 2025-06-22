@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { 
-  ArrowLeft, 
   Bell, 
   Clock, 
   Bus, 
@@ -24,6 +23,7 @@ import {
   Trash2
 } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
+import AppHeader from '../../../components/ui/AppHeader';
 
 export default function NotificationDetailScreen() {
   const router = useRouter();
@@ -98,69 +98,6 @@ export default function NotificationDetailScreen() {
     }
   }, [id]);
 
-  if (!notification) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="light" />
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <ArrowLeft size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Notification</Text>
-          <View style={{ width: 40 }} />
-        </View>
-        
-        <View style={styles.centerContent}>
-          <Text style={styles.errorText}>Notification not found</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  // Get icon based on notification type
-  const getNotificationIcon = (type) => {
-    switch (type) {
-      case 'alert': return <AlertTriangle size={24} color="#FF3831" />;
-      case 'reminder': return <Clock size={24} color="#F59E0B" />;
-      case 'promotion': return <Tag size={24} color="#8B5CF6" />;
-      case 'booking': return <Bus size={24} color="#004CFF" />;
-      case 'security': return <Shield size={24} color="#FF3831" />;
-      default: return <Bell size={24} color="#6B7280" />;
-    }
-  };
-
-  // Get background color for the notification type badge
-  const getTypeBgColor = (type) => {
-    switch (type) {
-      case 'alert': return '#FEE2E2';
-      case 'reminder': return '#FEF3C7';
-      case 'promotion': return '#F3E8FF';
-      case 'booking': return '#EBF2FF';
-      case 'security': return '#FEE2E2';
-      default: return '#F3F4F9';
-    }
-  };
-
-  // Get text color for the notification type badge
-  const getTypeTextColor = (type) => {
-    switch (type) {
-      case 'alert': return '#B91C1C';
-      case 'reminder': return '#B45309';
-      case 'promotion': return '#6D28D9';
-      case 'booking': return '#1E40AF';
-      case 'security': return '#B91C1C';
-      default: return '#6B7280';
-    }
-  };
-
-  // Format notification type for display
-  const formatType = (type) => {
-    return type.charAt(0).toUpperCase() + type.slice(1);
-  };
-
   // Handle sharing notification
   const handleShare = async () => {
     try {
@@ -202,31 +139,86 @@ export default function NotificationDetailScreen() {
 
   // Handle action button press
   const handleAction = () => {
-    if (notification.actionRoute) {
+    if (notification?.actionRoute) {
       router.push(notification.actionRoute);
     }
   };
+
+  // Get icon based on notification type
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case 'alert': return <AlertTriangle size={24} color="#FF3831" />;
+      case 'reminder': return <Clock size={24} color="#F59E0B" />;
+      case 'promotion': return <Tag size={24} color="#8B5CF6" />;
+      case 'booking': return <Bus size={24} color="#004CFF" />;
+      case 'security': return <Shield size={24} color="#FF3831" />;
+      default: return <Bell size={24} color="#6B7280" />;
+    }
+  };
+
+  // Get background color for the notification type badge
+  const getTypeBgColor = (type) => {
+    switch (type) {
+      case 'alert': return '#FEE2E2';
+      case 'reminder': return '#FEF3C7';
+      case 'promotion': return '#F3E8FF';
+      case 'booking': return '#EBF2FF';
+      case 'security': return '#FEE2E2';
+      default: return '#F3F4F9';
+    }
+  };
+
+  // Get text color for the notification type badge
+  const getTypeTextColor = (type) => {
+    switch (type) {
+      case 'alert': return '#B91C1C';
+      case 'reminder': return '#B45309';
+      case 'promotion': return '#6D28D9';
+      case 'booking': return '#1E40AF';
+      case 'security': return '#B91C1C';
+      default: return '#6B7280';
+    }
+  };
+
+  // Format notification type for display
+  const formatType = (type) => {
+    return type?.charAt(0).toUpperCase() + type?.slice(1);
+  };
+
+  // Custom right element for header
+  const headerRightElement = notification && (
+    <TouchableOpacity
+      onPress={handleShare}
+      style={styles.actionButton}
+    >
+      <Share2 size={20} color="#FFFFFF" />
+    </TouchableOpacity>
+  );
+
+  // If no notification found, show error state
+  if (!notification) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="light" />
+        
+        <AppHeader title="Notification" />
+        
+        <View style={styles.centerContent}>
+          <Text style={styles.errorText}>Notification not found</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notification</Text>
-        <TouchableOpacity
-          onPress={handleShare}
-          style={styles.actionButton}
-        >
-          <Share2 size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+      {/* Using the AppHeader component */}
+      <AppHeader 
+        title="Notification"
+        rightElement={headerRightElement}
+      />
 
       <ScrollView style={styles.content}>
         {/* Notification Header */}
@@ -315,27 +307,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   actionButton: {
     width: 40,

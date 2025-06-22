@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  ArrowLeft, 
   MapPin, 
   ArrowUpDown,
   Clock,
@@ -10,7 +9,7 @@ import {
   ChevronRight,
   Search
 } from 'lucide-react-native';
-import { StatusBar } from 'expo-status-bar';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function FavoritesScreen() {
   const router = useRouter();
@@ -64,18 +63,7 @@ export default function FavoritesScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Favorite Routes</Text>
-      </View>
+      <AppHeader title="Favorite Routes" />
 
       <ScrollView style={styles.content}>
         {favoriteRoutes.length > 0 ? (
@@ -154,27 +142,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   content: {
     flex: 1,

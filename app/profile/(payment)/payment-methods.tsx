@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StyleSheet, Image, Modal, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  ArrowLeft, 
   CreditCard,
   Plus,
   Ban,
@@ -10,7 +9,7 @@ import {
   AlertTriangle,
   X
 } from 'lucide-react-native';
-import { StatusBar } from 'expo-status-bar';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function PaymentMethodsScreen() {
   const router = useRouter();
@@ -98,19 +97,7 @@ export default function PaymentMethodsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Payment Methods</Text>
-        <View style={{ width: 40 }} />
-      </View>
+      <AppHeader title="Payment Methods" />
 
       <ScrollView style={styles.content}>
         {/* Payment Methods List */}
@@ -255,32 +242,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F3F4F9',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
   content: {
     flex: 1,
     paddingHorizontal: 24,
     paddingTop: 20,
-    paddingBottom: 100,
   },
   emptyState: {
     alignItems: 'center',

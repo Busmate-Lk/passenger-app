@@ -9,9 +9,11 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
-  TextInput
+  TextInput,
+  StatusBar, // Add StatusBar import
+  Platform
 } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+// Remove Expo StatusBar import
 import { 
   Search, 
   MapPin, 
@@ -89,7 +91,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+      {/* Replace Expo StatusBar with nothing - we're handling it in _layout.tsx */}
       
       {/* Header */}
       <View style={styles.header}>
@@ -344,6 +346,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
+    // Remove any paddingTop that might interfere with status bar
   },
   header: {
     flexDirection: 'row',
@@ -351,8 +354,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: 16,
-    paddingBottom: 8,
+    paddingBottom: 12,
     backgroundColor: '#004CFF',
+    // Added status bar height for Android
+    // ...(Platform.OS === 'android' ? { paddingTop: 16 + (StatusBar.currentHeight ?? 0) } : {}),
   },
   greeting: {
     fontSize: 14,

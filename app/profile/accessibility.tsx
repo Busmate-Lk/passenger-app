@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StyleSheet, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  ArrowLeft,
   Globe,
   Type,
   Volume2,
@@ -11,7 +10,7 @@ import {
   ChevronRight,
   Moon
 } from 'lucide-react-native';
-import { StatusBar } from 'expo-status-bar';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function AccessibilityScreen() {
   const router = useRouter();
@@ -29,12 +28,12 @@ export default function AccessibilityScreen() {
   // Available languages
   const languages = [
     { name: 'English', code: 'en' },
-    { name: 'සිංහල (Sinhala)', code: 'si' },
-    { name: 'தமிழ் (Tamil)', code: 'ta' }
+    { name: 'Sinhala', code: 'si' },
+    { name: 'Tamil', code: 'ta' }
   ];
 
   // Text size options
-  const textSizes = ['Small', 'Medium', 'Large', 'X-Large'];
+  const textSizes = ['Small', 'Medium', 'Large', 'Extra Large'];
 
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
   const [showTextSizeSelector, setShowTextSizeSelector] = useState(false);
@@ -88,19 +87,7 @@ export default function AccessibilityScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Language & Accessibility</Text>
-        <View style={{ width: 40 }} />
-      </View>
+      <AppHeader title="Language & Accessibility" />
 
       <ScrollView style={styles.content}>
         {/* Info Card */}
@@ -293,27 +280,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   content: {
     flex: 1,

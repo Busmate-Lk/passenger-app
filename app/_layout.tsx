@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar'; // Keep for compatibility
+import { StatusBar, Platform, View } from 'react-native'; // Add React Native's StatusBar
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { useFonts } from 'expo-font';
 import {
@@ -17,6 +18,15 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useFrameworkReady();
+
+  // Set status bar properties natively
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      StatusBar.setBarStyle('light-content');
+      StatusBar.setBackgroundColor('#004CFF');
+      StatusBar.setTranslucent(false);
+    }
+  }, []);
 
   const [fontsLoaded, fontError] = useFonts({
     'Inter-Regular': Inter_400Regular,
@@ -44,8 +54,6 @@ export default function RootLayout() {
         <Stack.Screen name="onboarding/onboarding2" />
         <Stack.Screen name="onboarding/onboarding3" />
         <Stack.Screen name="auth/login" />
-        {/* <Stack.Screen name="auth/signup" /> */}
-        {/* <Stack.Screen name="auth/otp" /> */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="search" options={{ headerShown: false }} />
         <Stack.Screen name="tickets" options={{ headerShown: false }} />
@@ -53,10 +61,10 @@ export default function RootLayout() {
         <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen name="notifications" options={{ headerShown: false }} />
         <Stack.Screen name="tracking" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> */}
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="light" backgroundColor="#004CFF" translucent={false} />
+      {/* Keep Expo StatusBar for iOS compatibility but hide it on Android */}
+      {Platform.OS === 'ios' && <ExpoStatusBar style="light" />}
     </AuthProvider>
   );
 }

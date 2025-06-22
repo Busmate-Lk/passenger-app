@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "busmate-passenger-app",
+    "name": "Busmate",
     "slug": "busmate-passenger-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -39,7 +39,7 @@
     "android": {
       "package": "com.kavindadimuthu.busmatepassengerapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/busmate-icon-inverted.png",
+        "foregroundImage": "./assets/images/busmate-round-icon.png",
         "backgroundColor": "#004CFF"
       },
       "softwareKeyboardLayoutMode": "pan",

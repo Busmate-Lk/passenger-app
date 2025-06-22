@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  ArrowLeft, 
   Bell, 
   Clock, 
   Bus, 
@@ -21,6 +20,7 @@ import {
   Check
 } from 'lucide-react-native';
 import { StatusBar } from 'expo-status-bar';
+import AppHeader from '../../components/ui/AppHeader';
 
 export default function NotificationsInboxScreen() {
   const router = useRouter();
@@ -191,26 +191,25 @@ export default function NotificationsInboxScreen() {
     router.push(`/notifications/${id}/detail`);
   };
 
+  // Custom right element for the header
+  const headerRightElement = (
+    <TouchableOpacity
+      onPress={markAllAsRead}
+      style={styles.actionButton}
+    >
+      <Check size={20} color="#FFFFFF" />
+    </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notifications</Text>
-        <TouchableOpacity
-          onPress={markAllAsRead}
-          style={styles.actionButton}
-        >
-          <Check size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+      {/* Using the AppHeader component */}
+      <AppHeader 
+        title="Notifications"
+        rightElement={headerRightElement}
+      />
 
       {/* Filters */}
       <View style={styles.filtersContainer}>
@@ -319,27 +318,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   actionButton: {
     width: 40,

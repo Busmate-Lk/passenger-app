@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Image, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  ArrowLeft, 
-  ChevronRight, 
   User,
   Mail,
   Phone,
@@ -11,8 +9,8 @@ import {
   MapPin,
   Edit2
 } from 'lucide-react-native';
-import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '@/context/AuthContext';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function ProfileInfoScreen() {
   const router = useRouter();
@@ -22,17 +20,7 @@ export default function ProfileInfoScreen() {
   if (!user) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar style="light" />
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <ArrowLeft size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Profile Information</Text>
-          <View style={{ width: 40 }} />
-        </View>
+        <AppHeader title="Profile Information" />
         <View style={styles.content}>
           <Text>Loading profile information...</Text>
         </View>
@@ -71,19 +59,7 @@ export default function ProfileInfoScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile Information</Text>
-        <View style={{ width: 40 }} />
-      </View>
+      <AppHeader title="Profile Information" />
 
       <ScrollView style={styles.content}>
         {/* Profile Image Section */}
@@ -187,27 +163,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   content: {
     flex: 1,

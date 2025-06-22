@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, TextInput, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  ArrowLeft, 
   CreditCard, 
   User,
   Calendar,
@@ -11,7 +10,7 @@ import {
   ChevronRight,
   Ban
 } from 'lucide-react-native';
-import { StatusBar } from 'expo-status-bar';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function AddPaymentMethodScreen() {
   const router = useRouter();
@@ -128,19 +127,7 @@ export default function AddPaymentMethodScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Add Payment Method</Text>
-        <View style={{ width: 40 }} />
-      </View>
+      <AppHeader title="Add Payment Method" />
 
       <ScrollView style={styles.content}>
         {/* Payment Method Type Selector */}
@@ -335,25 +322,22 @@ export default function AddPaymentMethodScreen() {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Save Button */}
-      <View style={styles.saveButtonContainer}>
+      {/* Add Button */}
+      <View style={styles.addButtonContainer}>
         <TouchableOpacity
           onPress={handleSubmit}
           disabled={isProcessing}
           style={[
-            styles.saveButton, 
-            isProcessing && styles.saveButtonDisabled
+            styles.addButton, 
+            isProcessing && styles.addButtonDisabled
           ]}
         >
           {isProcessing ? (
-            <View style={styles.processingContainer}>
-              <ActivityIndicator color="white" size="small" />
-              <Text style={styles.saveButtonText}>Saving...</Text>
-            </View>
+            <ActivityIndicator color="white" size="small" />
           ) : (
             <>
               <Check size={20} color="white" />
-              <Text style={styles.saveButtonText}>Add Payment Method</Text>
+              <Text style={styles.addButtonText}>Add Payment Method</Text>
             </>
           )}
         </TouchableOpacity>
@@ -366,27 +350,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   content: {
     flex: 1,
@@ -510,7 +473,7 @@ const styles = StyleSheet.create({
     color: '#004CFF',
     marginRight: 4,
   },
-  saveButtonContainer: {
+  addButtonContainer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -521,7 +484,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
   },
-  saveButton: {
+  addButton: {
     backgroundColor: '#004CFF',
     borderRadius: 12,
     paddingVertical: 16,
@@ -529,10 +492,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  saveButtonDisabled: {
+  addButtonDisabled: {
     backgroundColor: '#9CA3AF',
   },
-  saveButtonText: {
+  addButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: '600',

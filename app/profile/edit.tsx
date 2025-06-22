@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, TextInput, Image, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { 
-  ArrowLeft, 
   Camera, 
   User, 
   Mail, 
@@ -12,8 +11,8 @@ import {
   Check,
   ChevronRight
 } from 'lucide-react-native';
-import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '@/context/AuthContext';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function EditProfileScreen() {
   const router = useRouter();
@@ -92,19 +91,7 @@ export default function EditProfileScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Edit Profile</Text>
-        <View style={{ width: 40 }} />
-      </View>
+      <AppHeader title="Edit Profile" />
 
       <ScrollView style={styles.content}>
         {/* Profile Image Section */}
@@ -245,27 +232,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   content: {
     flex: 1,
