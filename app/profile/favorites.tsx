@@ -9,51 +9,18 @@ import {
   ChevronRight,
   Search
 } from 'lucide-react-native';
+import { useAuth } from '@/context/AuthContext';
+import { MockUserService } from '@/services/mockUserService';
 import AppHeader from '@/components/ui/AppHeader';
 
 export default function FavoritesScreen() {
   const router = useRouter();
+  const { user } = useAuth();
 
-  // Mock favorite routes data
-  const favoriteRoutes = [
-    {
-      id: '1',
-      from: 'Colombo Fort',
-      to: 'Kandy',
-      frequentTime: 'Weekdays, Morning',
-      lastUsed: '2 days ago',
-    },
-    {
-      id: '2',
-      from: 'Colombo Fort',
-      to: 'Galle',
-      frequentTime: 'Weekends',
-      lastUsed: '1 week ago',
-    },
-    {
-      id: '3',
-      from: 'Nugegoda',
-      to: 'Colombo Fort',
-      frequentTime: 'Weekdays, Evening',
-      lastUsed: 'Yesterday',
-    },
-    {
-      id: '4',
-      from: 'Kandy',
-      to: 'Colombo Fort',
-      frequentTime: 'Monthly',
-      lastUsed: '3 weeks ago',
-    },
-    {
-      id: '5',
-      from: 'Gampaha',
-      to: 'Colombo Fort',
-      frequentTime: 'Weekdays',
-      lastUsed: '5 days ago',
-    }
-  ];
+  // Get user's favorite routes from mock data
+  const favoriteRoutes = user?.email ? MockUserService.getFavoriteRoutes(user.email) : [];
 
-  const navigateToSearch = (from, to) => {
+  const navigateToSearch = (from: string, to: string) => {
     // Navigate to search screen with pre-filled values
     router.push({
       pathname: '/search',

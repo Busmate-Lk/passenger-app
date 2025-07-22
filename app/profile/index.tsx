@@ -55,7 +55,7 @@ export default function ProfileScreen() {
       title: 'Favorite Routes',
       icon: <Heart size={20} color="#004CFF" />,
       route: '/profile/favorites',
-      badge: user?.savedRoutes
+      badge: user?.favoriteRoutes?.length || user?.savedRoutes
     },
     {
       id: 'notifications',
@@ -118,6 +118,15 @@ export default function ProfileScreen() {
     }
   };
 
+  // Format member since date
+  const formatMemberSince = (memberSince: string) => {
+    if (!memberSince) return 'New User';
+    // If it's already formatted (like "June 2024"), return as is
+    if (memberSince.includes(' ')) return memberSince;
+    // Otherwise format it appropriately
+    return memberSince;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Replace custom header with AppHeader */}
@@ -139,9 +148,9 @@ export default function ProfileScreen() {
             style={styles.profileImage} 
           />
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{user?.name}</Text>
-            <Text style={styles.profileDetail}>{user?.phone}</Text>
-            <Text style={styles.profileDetail}>{user?.email}</Text>
+            <Text style={styles.profileName}>{user?.name || 'User'}</Text>
+            <Text style={styles.profileDetail}>{user?.phone || 'No phone number'}</Text>
+            <Text style={styles.profileDetail}>{user?.email || 'No email'}</Text>
           </View>
           <TouchableOpacity 
             style={styles.editButton}
@@ -159,12 +168,12 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.statDivider} />
           <View style={[styles.statItem, { flex: 2 }]}>
-            <Text style={styles.statValue}>{user?.savedRoutes || 0}</Text>
+            <Text style={styles.statValue}>{user?.favoriteRoutes?.length || user?.savedRoutes || 0}</Text>
             <Text style={styles.statLabel}>Saved Routes</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={[styles.statItem, { flex: 3 }]}>
-            <Text style={styles.statValue}>{user?.memberSince || 'New User'}</Text>
+            <Text style={styles.statValue}>{formatMemberSince(user?.memberSince || 'New User')}</Text>
             <Text style={styles.statLabel}>Member Since</Text>
           </View>
         </View>

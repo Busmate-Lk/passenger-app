@@ -20,6 +20,7 @@ import {
   Clock,
 } from 'lucide-react-native';
 import RouteFilterModal from '../../components/modals/RouteFilterModal';
+import mockData from '../../data/mockBusRouteData.json';
 
 interface FilterOptionsType {
   priceRange: [number, number];
@@ -43,14 +44,9 @@ export default function SearchScreen() {
     'Negombo to Colombo',
     'Galle to Colombo',
   ]);
-  const [popularDestinations, setPopularDestinations] = useState([
-    'Kandy',
-    'Galle',
-    'Jaffna',
-    'Nuwara Eliya',
-    'Anuradhapura',
-    'Trincomalee',
-  ]);
+
+  // Get popular destinations from mock data
+  const popularDestinations = mockData.destinations.slice(0, 6);
 
   const [filterOptions, setFilterOptions] = useState<FilterOptionsType>({
     priceRange: [100, 500],
@@ -65,30 +61,27 @@ export default function SearchScreen() {
   });
 
   const handleSearch = () => {
-    // Create search params object
-    const searchParams = {
-      from,
-      to,
-      date: filterOptions.date?.toISOString(),
-      endDate: filterOptions.endDate?.toISOString(),
-      passengers: filterOptions.passengers,
-      filters: filterOptions
-    };
-
-    // Save to recent searches
-    if (from && to && !recentSearches.includes(`${from} to ${to}`)) {
-      setRecentSearches(prev => [`${from} to ${to}`, ...prev].slice(0, 5));
+    if (!from || !to) {
+      return;
     }
 
-    // Navigate to results
+    // Save to recent searches
+    const searchString = `${from} to ${to}`;
+    if (!recentSearches.includes(searchString)) {
+      setRecentSearches(prev => [searchString, ...prev].slice(0, 5));
+    }
+
+    // Navigate to results with search parameters
     router.push({
       pathname: '/search/results',
       params: {
         from,
         to,
-        date: filterOptions.date ? filterOptions.date.toLocaleDateString() : '',
-        endDate: filterOptions.endDate ? filterOptions.endDate.toLocaleDateString() : '',
-        passengers: filterOptions.passengers
+        date: filterOptions.date ? filterOptions.date.toISOString() : '',
+        endDate: filterOptions.endDate ? filterOptions.endDate.toISOString() : '',
+        passengers: filterOptions.passengers.toString(),
+        // Convert complex filter object to JSON string
+        filters: JSON.stringify(filterOptions)
       }
     });
   };
@@ -164,7 +157,7 @@ export default function SearchScreen() {
               <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>From</Text>
                 <View style={[styles.inputWrapper, styles.fromInput]}>
-                  <MapPin size={18} color="#6B7280" />
+                  <MapPin size={18} color="#1DD724" />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter departure location"
@@ -178,7 +171,7 @@ export default function SearchScreen() {
               <View style={[styles.inputContainer, styles.toInputContainer]}>
                 <Text style={styles.inputLabel}>To</Text>
                 <View style={[styles.inputWrapper, styles.toInput]}>
-                  <MapPin size={18} color="#6B7280" />
+                  <MapPin size={18} color="#FF3831" />
                   <TextInput
                     style={styles.input}
                     placeholder="Enter destination"
@@ -210,7 +203,10 @@ export default function SearchScreen() {
 
             {/* Search Button */}
             <TouchableOpacity
-              style={styles.searchButton}
+              style={[
+                styles.searchButton,
+                (!from || !to) && styles.searchButtonDisabled
+              ]}
               onPress={handleSearch}
               disabled={!from || !to}
             >
@@ -266,7 +262,7 @@ export default function SearchScreen() {
         </View>
       </ScrollView>
 
-      {/* Filter Modal - with updated props */}
+      {/* Filter Modal */}
       <RouteFilterModal
         visible={showFilterModal}
         onClose={() => setShowFilterModal(false)}
@@ -341,7 +337,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#374151',
-    marginBottom: 4,
+    marginBottom: 2,
   },
   inputWrapper: {
     flexDirection: 'row',
@@ -351,7 +347,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     borderRadius: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 6,
   },
   fromInput: {
     borderBottomLeftRadius: 0,
@@ -403,6 +399,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#004CFF',
     borderRadius: 12,
     paddingVertical: 14,
+  },
+  searchButtonDisabled: {
+    backgroundColor: '#9CA3AF',
   },
   searchButtonText: {
     fontSize: 16,

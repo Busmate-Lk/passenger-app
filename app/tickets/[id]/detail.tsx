@@ -3,14 +3,20 @@ import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Image, Alert } 
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, QrCode, Download, Share, Calendar, Clock, MapPin, User, Phone, MessageCircle, TriangleAlert as AlertTriangle } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
+import { useAuth } from '@/context/AuthContext';
+import { MockUserService } from '@/services/mockUserService';
 
 export default function TicketDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const [selectedTab, setSelectedTab] = useState('details');
+  const { user } = useAuth();
 
-  // Mock ticket data - in real app, fetch based on id
-  const ticketData = {
+  // Get ticket data from mock service
+  const ticketData = user?.email ? MockUserService.getTicketById(user.email, id as string) : null;
+
+  // Fallback to mock data if ticket not found
+  const fallbackTicketData = {
     id: id as string,
     bookingId: 'SB2024011501',
     route: { from: 'Colombo Fort', to: 'Kandy' },
@@ -25,9 +31,9 @@ export default function TicketDetailScreen() {
     status: 'upcoming',
     busImage: 'https://images.pexels.com/photos/1545743/pexels-photo-1545743.jpeg?auto=compress&cs=tinysrgb&w=800',
     passenger: {
-      name: 'John Doe',
-      phone: '+94771234567',
-      email: 'john@example.com'
+      name: user?.name || 'John Doe',
+      phone: user?.phone || '+94771234567',
+      email: user?.email || 'john@example.com'
     },
     driver: {
       name: 'Mahinda Silva',
@@ -37,6 +43,8 @@ export default function TicketDetailScreen() {
     qrCode: 'QR123456789',
     cancellationPolicy: 'Free cancellation up to 2 hours before departure'
   };
+
+  const ticket = ticketData || fallbackTicketData;
 
   const handleCancelTicket = () => {
     Alert.alert(
@@ -86,15 +94,15 @@ export default function TicketDetailScreen() {
         <View style={styles.ticketCard}>
           <View style={styles.ticketHeader}>
             <View style={styles.ticketHeaderLeft}>
-              <Image source={{ uri: ticketData.busImage }} style={styles.busImage} />
+              <Image source={{ uri: ticket.busImage }} style={styles.busImage} />
               <View style={styles.ticketInfo}>
-                <Text style={styles.operatorName}>{ticketData.operator}</Text>
-                <Text style={styles.routeNumber}>Route {ticketData.routeNumber}</Text>
+                <Text style={styles.operatorName}>{ticket.operator}</Text>
+                <Text style={styles.routeNumber}>Route {ticket.routeNumber}</Text>
               </View>
             </View>
-            <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(ticketData.status)}15` }]}>
-              <Text style={[styles.statusText, { color: getStatusColor(ticketData.status) }]}>
-                {ticketData.status.charAt(0).toUpperCase() + ticketData.status.slice(1)}
+            <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(ticket.status)}15` }]}>
+              <Text style={[styles.statusText, { color: getStatusColor(ticket.status) }]}>
+                {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
               </Text>
             </View>
           </View>
@@ -102,24 +110,24 @@ export default function TicketDetailScreen() {
           <View style={styles.routeContainer}>
             <View style={styles.routePoint}>
               <View style={[styles.routeDot, { backgroundColor: '#004CFF' }]} />
-              <Text style={styles.routeLocation}>{ticketData.route.from}</Text>
-              <Text style={styles.routeTime}>{ticketData.time}</Text>
+              <Text style={styles.routeLocation}>{ticket.route.from}</Text>
+              <Text style={styles.routeTime}>{ticket.time}</Text>
             </View>
             <View style={styles.routeLine}>
               <View style={styles.line} />
-              <Text style={styles.duration}>{ticketData.duration}</Text>
+              <Text style={styles.duration}>{ticket.duration}</Text>
               <View style={styles.line} />
             </View>
             <View style={styles.routePoint}>
               <View style={[styles.routeDot, { backgroundColor: '#FF3831' }]} />
-              <Text style={styles.routeLocation}>{ticketData.route.to}</Text>
-              <Text style={styles.routeTime}>{ticketData.arrivalTime}</Text>
+              <Text style={styles.routeLocation}>{ticket.route.to}</Text>
+              <Text style={styles.routeTime}>{ticket.arrivalTime}</Text>
             </View>
           </View>
 
           <View style={styles.ticketFooter}>
-            <Text style={styles.bookingId}>#{ticketData.bookingId}</Text>
-            <Text style={styles.price}>LKR {ticketData.price}</Text>
+            <Text style={styles.bookingId}>#{ticket.bookingId}</Text>
+            <Text style={styles.price}>LKR {ticket.price}</Text>
           </View>
         </View>
 
@@ -160,21 +168,21 @@ export default function TicketDetailScreen() {
                 <Calendar size={20} color="#6B7280" />
                 <View style={styles.detailInfo}>
                   <Text style={styles.detailLabel}>Date</Text>
-                  <Text style={styles.detailValue}>{ticketData.date}</Text>
+                  <Text style={styles.detailValue}>{ticket.date}</Text>
                 </View>
               </View>
               <View style={styles.detailItem}>
                 <Clock size={20} color="#6B7280" />
                 <View style={styles.detailInfo}>
                   <Text style={styles.detailLabel}>Departure Time</Text>
-                  <Text style={styles.detailValue}>{ticketData.time}</Text>
+                  <Text style={styles.detailValue}>{ticket.time}</Text>
                 </View>
               </View>
               <View style={styles.detailItem}>
                 <MapPin size={20} color="#6B7280" />
                 <View style={styles.detailInfo}>
                   <Text style={styles.detailLabel}>Seat Number</Text>
-                  <Text style={styles.detailValue}>{ticketData.seatNumber}</Text>
+                  <Text style={styles.detailValue}>{ticket.seatNumber}</Text>
                 </View>
               </View>
             </View>
@@ -187,7 +195,7 @@ export default function TicketDetailScreen() {
                   Please arrive at the departure point 15 minutes before scheduled time
                 </Text>
               </View>
-              <Text style={styles.policyText}>{ticketData.cancellationPolicy}</Text>
+              <Text style={styles.policyText}>{ticket.cancellationPolicy}</Text>
             </View>
           </View>
         )}
@@ -201,9 +209,9 @@ export default function TicketDetailScreen() {
                   <User size={24} color="#004CFF" />
                 </View>
                 <View style={styles.passengerInfo}>
-                  <Text style={styles.passengerName}>{ticketData.passenger.name}</Text>
-                  <Text style={styles.passengerDetail}>{ticketData.passenger.phone}</Text>
-                  <Text style={styles.passengerDetail}>{ticketData.passenger.email}</Text>
+                  <Text style={styles.passengerName}>{ticket.passenger.name}</Text>
+                  <Text style={styles.passengerDetail}>{ticket.passenger.phone}</Text>
+                  <Text style={styles.passengerDetail}>{ticket.passenger.email}</Text>
                 </View>
               </View>
             </View>
@@ -219,8 +227,8 @@ export default function TicketDetailScreen() {
                   <Text style={styles.driverInitial}>M</Text>
                 </View>
                 <View style={styles.driverInfo}>
-                  <Text style={styles.driverName}>{ticketData.driver.name}</Text>
-                  <Text style={styles.driverRating}>Rating: {ticketData.driver.rating} ⭐</Text>
+                  <Text style={styles.driverName}>{ticket.driver.name}</Text>
+                  <Text style={styles.driverRating}>Rating: {ticket.driver.rating} ⭐</Text>
                 </View>
                 <View style={styles.driverActions}>
                   <TouchableOpacity style={styles.contactButton}>
@@ -248,7 +256,7 @@ export default function TicketDetailScreen() {
         </View>
 
         {/* Cancel Button */}
-        {ticketData.status === 'upcoming' && (
+        {ticket.status === 'upcoming' && (
           <TouchableOpacity
             onPress={handleCancelTicket}
             style={styles.cancelButton}

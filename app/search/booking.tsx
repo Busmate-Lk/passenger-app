@@ -1,32 +1,28 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, User, Phone, Mail, MapPin, Calendar, Clock } from 'lucide-react-native';
+import { ArrowLeft, User, Phone, MapPin, Calendar, Clock, Plus, UserPlus } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
 
 interface Passenger {
   id: string;
   name: string;
-  age: string;
   gender: 'male' | 'female';
   phone: string;
-  email: string;
 }
 
 export default function BookingScreen() {
   const router = useRouter();
   const [passengers, setPassengers] = useState<Passenger[]>([
-    { id: '1', name: '', age: '', gender: 'male', phone: '', email: '' }
+    { id: '1', name: '', gender: 'male', phone: '' }
   ]);
 
   const addPassenger = () => {
     const newPassenger: Passenger = {
       id: Date.now().toString(),
       name: '',
-      age: '',
       gender: 'male',
-      phone: '',
-      email: ''
+      phone: ''
     };
     setPassengers([...passengers, newPassenger]);
   };
@@ -53,6 +49,10 @@ export default function BookingScreen() {
     price: 250
   };
 
+  const isFormValid = () => {
+    return passengers.every(p => p.name.trim() !== '' && p.phone.trim() !== '');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -72,15 +72,15 @@ export default function BookingScreen() {
           <Text style={styles.sectionTitle}>Trip Summary</Text>
           <View style={styles.tripDetails}>
             <View style={styles.tripRow}>
-              <MapPin size={16} color="#6B7280" />
+              <MapPin size={16} color="#004CFF" />
               <Text style={styles.tripText}>{bookingDetails.route}</Text>
             </View>
             <View style={styles.tripRow}>
-              <Calendar size={16} color="#6B7280" />
+              <Calendar size={16} color="#004CFF" />
               <Text style={styles.tripText}>{bookingDetails.date}</Text>
             </View>
             <View style={styles.tripRow}>
-              <Clock size={16} color="#6B7280" />
+              <Clock size={16} color="#004CFF" />
               <Text style={styles.tripText}>{bookingDetails.time} • {bookingDetails.duration}</Text>
             </View>
           </View>
@@ -95,13 +95,20 @@ export default function BookingScreen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Passenger Information</Text>
             <TouchableOpacity onPress={addPassenger} style={styles.addButton}>
-              <Text style={styles.addButtonText}>+ Add Passenger</Text>
+              <UserPlus size={16} color="#FFFFFF" />
+              <Text style={styles.addButtonText}>Add</Text>
             </TouchableOpacity>
           </View>
 
           {passengers.map((passenger, index) => (
-            <View key={passenger.id} style={styles.passengerForm}>
+            <View key={passenger.id} style={[
+              styles.passengerForm,
+              index === passengers.length - 1 && { borderBottomWidth: 0, marginBottom: 0, paddingBottom: 0 }
+            ]}>
               <View style={styles.passengerHeader}>
+                <View style={styles.passengerBadge}>
+                  <Text style={styles.passengerBadgeText}>{index + 1}</Text>
+                </View>
                 <Text style={styles.passengerTitle}>Passenger {index + 1}</Text>
                 {passengers.length > 1 && (
                   <TouchableOpacity
@@ -115,12 +122,12 @@ export default function BookingScreen() {
 
               <View style={styles.formRow}>
                 <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>Full Name</Text>
+                  <Text style={styles.inputLabel}>Name</Text>
                   <View style={styles.inputWrapper}>
                     <User size={16} color="#6B7280" />
                     <TextInput
                       style={styles.textInput}
-                      placeholder="Enter full name"
+                      placeholder="Enter name"
                       value={passenger.name}
                       onChangeText={(text) => updatePassenger(passenger.id, 'name', text)}
                     />
@@ -129,17 +136,23 @@ export default function BookingScreen() {
               </View>
 
               <View style={styles.formRow}>
-                <View style={[styles.inputContainer, { flex: 1, marginRight: 8 }]}>
-                  <Text style={styles.inputLabel}>Age</Text>
-                  <TextInput
-                    style={styles.textInputSmall}
-                    placeholder="Age"
-                    keyboardType="numeric"
-                    value={passenger.age}
-                    onChangeText={(text) => updatePassenger(passenger.id, 'age', text)}
-                  />
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputLabel}>Phone Number</Text>
+                  <View style={styles.inputWrapper}>
+                    <Phone size={16} color="#6B7280" />
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder="+94 77 123 4567"
+                      keyboardType="phone-pad"
+                      value={passenger.phone}
+                      onChangeText={(text) => updatePassenger(passenger.id, 'phone', text)}
+                    />
+                  </View>
                 </View>
-                <View style={[styles.inputContainer, { flex: 1, marginLeft: 8 }]}>
+              </View>
+
+              <View style={styles.formRow}>
+                <View style={styles.inputContainer}>
                   <Text style={styles.inputLabel}>Gender</Text>
                   <View style={styles.genderContainer}>
                     <TouchableOpacity
@@ -173,41 +186,12 @@ export default function BookingScreen() {
                   </View>
                 </View>
               </View>
-
-              <View style={styles.formRow}>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>Phone Number</Text>
-                  <View style={styles.inputWrapper}>
-                    <Phone size={16} color="#6B7280" />
-                    <TextInput
-                      style={styles.textInput}
-                      placeholder="+94 77 123 4567"
-                      keyboardType="phone-pad"
-                      value={passenger.phone}
-                      onChangeText={(text) => updatePassenger(passenger.id, 'phone', text)}
-                    />
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.formRow}>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputLabel}>Email Address</Text>
-                  <View style={styles.inputWrapper}>
-                    <Mail size={16} color="#6B7280" />
-                    <TextInput
-                      style={styles.textInput}
-                      placeholder="email@example.com"
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      value={passenger.email}
-                      onChangeText={(text) => updatePassenger(passenger.id, 'email', text)}
-                    />
-                  </View>
-                </View>
-              </View>
             </View>
           ))}
+
+          <View style={styles.passengerNotes}>
+            <Text style={styles.noteText}>* We only need essential information to complete your booking</Text>
+          </View>
         </View>
 
         {/* Price Summary */}
@@ -233,7 +217,8 @@ export default function BookingScreen() {
       <View style={styles.continueContainer}>
         <TouchableOpacity
           onPress={() => router.push('/search/seat-selection')}
-          style={styles.continueButton}
+          style={[styles.continueButton, !isFormValid() && styles.continueButtonDisabled]}
+          disabled={!isFormValid()}
         >
           <Text style={styles.continueButtonText}>Continue to Seat Selection</Text>
         </TouchableOpacity>
@@ -278,6 +263,11 @@ const styles = StyleSheet.create({
     padding: 20,
     marginTop: 16,
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   sectionTitle: {
     fontSize: 18,
@@ -297,6 +287,7 @@ const styles = StyleSheet.create({
   tripText: {
     fontSize: 14,
     color: '#6B7280',
+    flex: 1,
   },
   operatorInfo: {
     paddingTop: 16,
@@ -318,6 +309,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -326,15 +322,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#004CFF',
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#EBF2FF',
+    paddingVertical: 8,
     borderRadius: 8,
+    gap: 6,
   },
   addButtonText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#004CFF',
+    color: '#FFFFFF',
   },
   passengerForm: {
     marginBottom: 24,
@@ -344,14 +343,28 @@ const styles = StyleSheet.create({
   },
   passengerHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+  },
+  passengerBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#004CFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  passengerBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'white',
   },
   passengerTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: '#111827',
+    flex: 1,
   },
   removeButton: {
     paddingHorizontal: 8,
@@ -390,16 +403,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#111827',
   },
-  textInputSmall: {
-    backgroundColor: '#F9FAFB',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: '#111827',
-  },
   genderContainer: {
     flexDirection: 'row',
     gap: 8,
@@ -425,11 +428,24 @@ const styles = StyleSheet.create({
   genderTextActive: {
     color: 'white',
   },
+  passengerNotes: {
+    marginTop: 8,
+  },
+  noteText: {
+    fontSize: 12,
+    color: '#6B7280',
+    fontStyle: 'italic',
+  },
   priceCard: {
     backgroundColor: 'white',
     borderRadius: 16,
     padding: 20,
     marginBottom: 120,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   priceRow: {
     flexDirection: 'row',
@@ -471,12 +487,20 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
   },
   continueButton: {
     backgroundColor: '#004CFF',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
+  },
+  continueButtonDisabled: {
+    backgroundColor: '#93C5FD',
   },
   continueButtonText: {
     fontSize: 18,

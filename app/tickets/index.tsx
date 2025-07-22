@@ -3,6 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Image } from 'r
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Calendar, Clock, MapPin, QrCode, MoveVertical as MoreVertical, Filter } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
+import { useAuth } from '@/context/AuthContext';
+import { MockUserService } from '@/services/mockUserService';
 
 interface Ticket {
   id: string;
@@ -22,54 +24,13 @@ interface Ticket {
   busImage: string;
 }
 
-const mockTickets: Ticket[] = [
-  {
-    id: '1',
-    bookingId: 'SB2024011501',
-    route: { from: 'Colombo Fort', to: 'Kandy' },
-    date: 'Today, Jan 15',
-    time: '08:30 AM',
-    duration: '2h 30m',
-    operator: 'SLTB Express',
-    routeNumber: '001',
-    seatNumber: 'A12',
-    price: 250,
-    status: 'upcoming',
-    busImage: 'https://images.pexels.com/photos/1545743/pexels-photo-1545743.jpeg?auto=compress&cs=tinysrgb&w=800'
-  },
-  {
-    id: '2',
-    bookingId: 'SB2024011401',
-    route: { from: 'Galle', to: 'Matara' },
-    date: 'Yesterday, Jan 14',
-    time: '02:30 PM',
-    duration: '45m',
-    operator: 'Lanka Travels',
-    routeNumber: '138',
-    seatNumber: 'B05',
-    price: 120,
-    status: 'completed',
-    busImage: 'https://images.pexels.com/photos/1098365/pexels-photo-1098365.jpeg?auto=compress&cs=tinysrgb&w=800'
-  },
-  {
-    id: '3',
-    bookingId: 'SB2024011301',
-    route: { from: 'Negombo', to: 'Colombo' },
-    date: 'Jan 13, 2024',
-    time: '06:00 PM',
-    duration: '1h 15m',
-    operator: 'Comfort Line',
-    routeNumber: '205',
-    seatNumber: 'C08',
-    price: 180,
-    status: 'cancelled',
-    busImage: 'https://images.pexels.com/photos/1098364/pexels-photo-1098364.jpeg?auto=compress&cs=tinysrgb&w=800'
-  }
-];
-
 export default function TicketsScreen() {
   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const { user } = useAuth();
+
+  // Get user's tickets from mock data
+  const userTickets = user?.email ? MockUserService.getRecentTickets(user.email) : [];
 
   const filters = [
     { id: 'all', label: 'All Tickets' },
@@ -79,8 +40,8 @@ export default function TicketsScreen() {
   ];
 
   const filteredTickets = selectedFilter === 'all' 
-    ? mockTickets 
-    : mockTickets.filter(ticket => ticket.status === selectedFilter);
+    ? userTickets 
+    : userTickets.filter(ticket => ticket.status === selectedFilter);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -304,8 +265,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     paddingTop: 16,
-    // paddingBottom: 120,
-    // marginBottom: 16,
   },
   emptyState: {
     alignItems: 'center',

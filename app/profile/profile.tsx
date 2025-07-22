@@ -57,6 +57,12 @@ export default function ProfileInfoScreen() {
     }
   };
 
+  // Format member since date for display
+  const formatMemberSince = (memberSince: string) => {
+    if (!memberSince) return 'Recently';
+    return memberSince;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <AppHeader title="Profile Information" />
@@ -69,79 +75,79 @@ export default function ProfileInfoScreen() {
             style={styles.profileImage} 
           />
           <Text style={styles.nameText}>{user.name}</Text>
-          <Text style={styles.memberSinceText}>Member since {user.memberSince}</Text>
+          <Text style={styles.memberSinceText}>Member since {formatMemberSince(user.memberSince)}</Text>
         </View>
 
         <View style={styles.infoCardContainer}>
-            {/* Info Card */}
-        <View style={styles.infoCard}>
-          <Text style={styles.sectionTitle}>Personal Information</Text>
+          {/* Info Card */}
+          <View style={styles.infoCard}>
+            <Text style={styles.sectionTitle}>Personal Information</Text>
 
-          <View style={styles.infoItem}>
-            <View style={styles.infoIconContainer}>
-              <User size={20} color="#004CFF" />
+            <View style={styles.infoItem}>
+              <View style={styles.infoIconContainer}>
+                <User size={20} color="#004CFF" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Full Name</Text>
+                <Text style={styles.infoValue}>{user.name}</Text>
+              </View>
             </View>
-            <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>Full Name</Text>
-              <Text style={styles.infoValue}>{user.name}</Text>
+
+            <View style={styles.infoItem}>
+              <View style={styles.infoIconContainer}>
+                <Mail size={20} color="#004CFF" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Email Address</Text>
+                <Text style={styles.infoValue}>{user.email}</Text>
+              </View>
+            </View>
+
+            <View style={styles.infoItem}>
+              <View style={styles.infoIconContainer}>
+                <Phone size={20} color="#004CFF" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Phone Number</Text>
+                <Text style={styles.infoValue}>{user.phone}</Text>
+              </View>
+            </View>
+
+            <View style={styles.infoItem}>
+              <View style={styles.infoIconContainer}>
+                <Calendar size={20} color="#004CFF" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Date of Birth</Text>
+                <Text style={styles.infoValue}>{user.dob || 'Not provided'}</Text>
+              </View>
             </View>
           </View>
 
-          <View style={styles.infoItem}>
-            <View style={styles.infoIconContainer}>
-              <Mail size={20} color="#004CFF" />
+          {/* Address Card */}
+          <View style={styles.infoCard}>
+            <Text style={styles.sectionTitle}>Contact Information</Text>
+
+            <View style={styles.infoItem}>
+              <View style={styles.infoIconContainer}>
+                <MapPin size={20} color="#004CFF" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>Address</Text>
+                <Text style={styles.infoValue}>{user.address || 'Not provided'}</Text>
+              </View>
             </View>
-            <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>Email Address</Text>
-              <Text style={styles.infoValue}>{user.email}</Text>
+
+            <View style={styles.infoItem}>
+              <View style={styles.infoIconContainer}>
+                <MapPin size={20} color="#004CFF" />
+              </View>
+              <View style={styles.infoContent}>
+                <Text style={styles.infoLabel}>City</Text>
+                <Text style={styles.infoValue}>{user.city || 'Not provided'}</Text>
+              </View>
             </View>
           </View>
-
-          <View style={styles.infoItem}>
-            <View style={styles.infoIconContainer}>
-              <Phone size={20} color="#004CFF" />
-            </View>
-            <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>Phone Number</Text>
-              <Text style={styles.infoValue}>{user.phone}</Text>
-            </View>
-          </View>
-
-          <View style={styles.infoItem}>
-            <View style={styles.infoIconContainer}>
-              <Calendar size={20} color="#004CFF" />
-            </View>
-            <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>Date of Birth</Text>
-              <Text style={styles.infoValue}>{user.dob || 'Not provided'}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Address Card */}
-        <View style={styles.infoCard}>
-          <Text style={styles.sectionTitle}>Contact Information</Text>
-
-          <View style={styles.infoItem}>
-            <View style={styles.infoIconContainer}>
-              <MapPin size={20} color="#004CFF" />
-            </View>
-            <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>Address</Text>
-              <Text style={styles.infoValue}>{user.address || 'Not provided'}</Text>
-            </View>
-          </View>
-
-          <View style={styles.infoItem}>
-            <View style={styles.infoIconContainer}>
-              <MapPin size={20} color="#004CFF" />
-            </View>
-            <View style={styles.infoContent}>
-              <Text style={styles.infoLabel}>City</Text>
-              <Text style={styles.infoValue}>{user.city || 'Not provided'}</Text>
-            </View>
-          </View>
-        </View>
         </View>
       </ScrollView>
 

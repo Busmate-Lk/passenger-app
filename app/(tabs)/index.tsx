@@ -10,10 +10,9 @@ import {
   Image,
   Dimensions,
   TextInput,
-  StatusBar, // Add StatusBar import
+  StatusBar,
   Platform
 } from 'react-native';
-// Remove Expo StatusBar import
 import { 
   Search, 
   MapPin, 
@@ -28,30 +27,18 @@ import {
   ArrowDown
 } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
+import { MockUserService } from '@/services/mockUserService';
 
 export default function HomeScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useAuth();
   
+  // Get user-specific data from mock service
+  const upcomingTrip = user?.email ? MockUserService.getUpcomingTrip(user.email) : null;
+  const recentRoutes = user?.email ? MockUserService.getRecentRoutes(user.email) : [];
+  
   // Mock data for dashboard
-  const upcomingTrip = {
-    id: 'trip-001',
-    route: 'Colombo Fort → Kandy',
-    date: 'Today, 3:30 PM',
-    busInfo: 'SLTB Express • Route 001',
-    status: 'upcoming',
-    duration: '2h 30m',
-    seats: 'A12, A13',
-    image: 'https://images.pexels.com/photos/1098364/pexels-photo-1098364.jpeg?auto=compress&cs=tinysrgb&w=800'
-  };
-  
-  const recentRoutes = [
-    { id: '1', from: 'Colombo', to: 'Kandy', saved: true },
-    { id: '2', from: 'Negombo', to: 'Colombo', saved: false },
-    { id: '3', from: 'Colombo', to: 'Galle', saved: true }
-  ];
-  
   const promotions = [
     { 
       id: 'promo1', 
@@ -89,15 +76,20 @@ export default function HomeScreen() {
     }
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Replace Expo StatusBar with nothing - we're handling it in _layout.tsx */}
-      
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Good Morning</Text>
-          <Text style={styles.username}>{user?.name ?? 'John Doe'}</Text>
+          <Text style={styles.greeting}>{getGreeting()}</Text>
+          <Text style={styles.username}>{user?.name ?? 'Passenger'}</Text>
         </View>
         <TouchableOpacity 
           style={styles.notificationButton}
@@ -134,26 +126,26 @@ export default function HomeScreen() {
               style={styles.upcomingTripCard}
               onPress={() => router.push(`/tickets/${upcomingTrip.id}/detail`)}
             >
-              <Image source={{ uri: upcomingTrip.image }} style={styles.tripImage} />
+              <Image source={{ uri: upcomingTrip.busImage }} style={styles.tripImage} />
               <View style={styles.tripOverlay}>
                 <View style={styles.tripDetails}>
                   <View style={styles.tripHeader}>
-                    <Text style={styles.tripRoute}>{upcomingTrip.route}</Text>
+                    <Text style={styles.tripRoute}>{upcomingTrip.route.from} → {upcomingTrip.route.to}</Text>
                     <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(upcomingTrip.status)}15` }]}>
                       <Text style={[styles.statusText, { color: getStatusColor(upcomingTrip.status) }]}>
                         Upcoming
                       </Text>
                     </View>
                   </View>
-                  <Text style={styles.tripInfo}>{upcomingTrip.busInfo}</Text>
+                  <Text style={styles.tripInfo}>{upcomingTrip.operator} • Route {upcomingTrip.routeNumber}</Text>
                   <View style={styles.tripFooter}>
                     <View style={styles.tripDetail}>
                       <Clock size={16} color="#FFFFFF" />
-                      <Text style={styles.tripDetailText}>{upcomingTrip.date}</Text>
+                      <Text style={styles.tripDetailText}>{upcomingTrip.date}, {upcomingTrip.time}</Text>
                     </View>
                     <View style={styles.tripDetail}>
                       <Ticket size={16} color="#FFFFFF" />
-                      <Text style={styles.tripDetailText}>Seat {upcomingTrip.seats}</Text>
+                      <Text style={styles.tripDetailText}>Seat {upcomingTrip.seatNumber}</Text>
                     </View>
                   </View>
                 </View>
@@ -227,44 +219,46 @@ export default function HomeScreen() {
         )}
         
         {/* Recent Routes */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recent Routes</Text>
-            <TouchableOpacity onPress={() => router.push('/profile/favorites')}>
-              <Text style={styles.seeAllText}>See All</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.recentRoutesContainer}>
-            {recentRoutes.map(route => (
-              <TouchableOpacity 
-                key={route.id} 
-                style={styles.recentRouteItem}
-                onPress={() => router.push('/search/results')}
-              >
-                <View style={styles.routePoints}>
-                  <View style={styles.routePointContainer}>
-                    <View style={[styles.routePointDot, { backgroundColor: '#004CFF' }]} />
-                    <Text style={styles.routePointText}>{route.from}</Text>
-                  </View>
-                  <View style={styles.routeLine} />
-                  <View style={styles.routePointContainer}>
-                    <View style={[styles.routePointDot, { backgroundColor: '#FF3831' }]} />
-                    <Text style={styles.routePointText}>{route.to}</Text>
-                  </View>
-                </View>
-                <View style={styles.routeActions}>
-                  <TouchableOpacity style={styles.routeActionIcon}>
-                    <Star size={18} color={route.saved ? "#FFB800" : "#9CA3AF"} fill={route.saved ? "#FFB800" : "none"} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.routeActionSearch}>
-                    <Text style={styles.routeActionSearchText}>Search</Text>
-                  </TouchableOpacity>
-                </View>
+        {recentRoutes.length > 0 && (
+          <View style={styles.sectionContainer}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Recent Routes</Text>
+              <TouchableOpacity onPress={() => router.push('/profile/favorites')}>
+                <Text style={styles.seeAllText}>See All</Text>
               </TouchableOpacity>
-            ))}
+            </View>
+            
+            <View style={styles.recentRoutesContainer}>
+              {recentRoutes.map(route => (
+                <TouchableOpacity 
+                  key={route.id} 
+                  style={styles.recentRouteItem}
+                  onPress={() => router.push('/search/results')}
+                >
+                  <View style={styles.routePoints}>
+                    <View style={styles.routePointContainer}>
+                      <View style={[styles.routePointDot, { backgroundColor: '#004CFF' }]} />
+                      <Text style={styles.routePointText}>{route.from}</Text>
+                    </View>
+                    <View style={styles.routeLine} />
+                    <View style={styles.routePointContainer}>
+                      <View style={[styles.routePointDot, { backgroundColor: '#FF3831' }]} />
+                      <Text style={styles.routePointText}>{route.to}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.routeActions}>
+                    <TouchableOpacity style={styles.routeActionIcon}>
+                      <Star size={18} color={route.saved ? "#FFB800" : "#9CA3AF"} fill={route.saved ? "#FFB800" : "none"} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.routeActionSearch}>
+                      <Text style={styles.routeActionSearchText}>Search</Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
+        )}
         
         {/* Promotions */}
         <View style={styles.sectionContainer}>
@@ -346,7 +340,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-    // Remove any paddingTop that might interfere with status bar
   },
   header: {
     flexDirection: 'row',
@@ -356,8 +349,6 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 12,
     backgroundColor: '#004CFF',
-    // Added status bar height for Android
-    // ...(Platform.OS === 'android' ? { paddingTop: 16 + (StatusBar.currentHeight ?? 0) } : {}),
   },
   greeting: {
     fontSize: 14,
