@@ -1,9 +1,9 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  StyleSheet,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
@@ -13,18 +13,23 @@ import {
   StatusBar,
   Platform
 } from 'react-native';
-import { 
-  Search, 
-  MapPin, 
-  Star, 
-  ArrowRight, 
-  Bell, 
-  AlertTriangle, 
-  Clock, 
-  Bus, 
-  Ticket, 
-  ArrowUp, 
-  ArrowDown
+import {
+  Search,
+  MapPin,
+  Star,
+  ArrowRight,
+  Bell,
+  AlertTriangle,
+  Clock,
+  Bus,
+  Ticket,
+  ArrowUp,
+  ArrowDown,
+  Wallet,
+  MoreHorizontal,
+  Navigation,
+  Heart,
+  Repeat
 } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
 import { MockUserService } from '@/services/mockUserService';
@@ -33,32 +38,32 @@ export default function HomeScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const { user } = useAuth();
-  
+
   // Get user-specific data from mock service
   const upcomingTrip = user?.email ? MockUserService.getUpcomingTrip(user.email) : null;
   const recentRoutes = user?.email ? MockUserService.getRecentRoutes(user.email) : [];
-  
+
   // Mock data for dashboard
   const promotions = [
-    { 
-      id: 'promo1', 
-      title: 'Weekend Special', 
+    {
+      id: 'promo1',
+      title: 'Weekend Special',
       description: 'Get 15% off on weekend trips!',
       color: '#004CFF',
       image: 'https://images.pexels.com/photos/2402648/pexels-photo-2402648.jpeg?auto=compress&cs=tinysrgb&w=800'
     },
-    { 
-      id: 'promo2', 
-      title: 'Student Discount', 
+    {
+      id: 'promo2',
+      title: 'Student Discount',
       description: 'Special rates for students with ID',
       color: '#FF3831',
       image: 'https://images.pexels.com/photos/1872199/pexels-photo-1872199.jpeg?auto=compress&cs=tinysrgb&w=800'
     }
   ];
-  
+
   // Alert data
   const alerts = [
-    { 
+    {
       id: 'alert1',
       title: 'Route 001 Delays',
       message: 'Temporary delays on Colombo-Kandy due to construction',
@@ -66,7 +71,7 @@ export default function HomeScreen() {
       type: 'warning'
     }
   ];
-  
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'upcoming': return '#1DD724';
@@ -83,6 +88,23 @@ export default function HomeScreen() {
     return 'Good Evening';
   };
 
+  const handleRouteSearch = (route) => {
+    router.push({
+      pathname: '/search/results',
+      params: {
+        from: route.from,
+        to: route.to,
+        date: new Date().toISOString().split('T')[0],
+        passengers: '1'
+      }
+    });
+  };
+
+  const handleToggleFavorite = (routeId) => {
+    // TODO: Implement favorite toggle logic
+    console.log('Toggle favorite for route:', routeId);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -91,7 +113,7 @@ export default function HomeScreen() {
           <Text style={styles.greeting}>{getGreeting()}</Text>
           <Text style={styles.username}>{user?.name ?? 'Passenger'}</Text>
         </View>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.notificationButton}
           onPress={() => router.push('/notifications/inbox')}
         >
@@ -99,11 +121,11 @@ export default function HomeScreen() {
           <View style={styles.notificationBadge} />
         </TouchableOpacity>
       </View>
-      
+
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.searchBar}
             onPress={() => router.push('/search')}
           >
@@ -111,7 +133,50 @@ export default function HomeScreen() {
             <Text style={styles.searchPlaceholder}>Where are you going?</Text>
           </TouchableOpacity>
         </View>
-        
+
+        {/* Quick Actions */}
+        <View style={styles.quickActionsContainer}>
+          <TouchableOpacity
+            style={styles.quickActionButton}
+            onPress={() => router.push('/search')}
+          >
+            <View style={[styles.quickActionIcon, { backgroundColor: '#EBF2FF' }]}>
+              <Search size={24} color="#004CFF" />
+            </View>
+            <Text style={styles.quickActionText}>Find Buses</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.quickActionButton}
+            onPress={() => router.push('/tickets')}
+          >
+            <View style={[styles.quickActionIcon, { backgroundColor: '#FFF4EB' }]}>
+              <Ticket size={24} color="#FF8A00" />
+            </View>
+            <Text style={styles.quickActionText}>My Tickets</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.quickActionButton}
+            onPress={() => router.push('/tracking/input')}
+          >
+            <View style={[styles.quickActionIcon, { backgroundColor: '#EBFFF4' }]}>
+              <Bus size={24} color="#1DD724" />
+            </View>
+            <Text style={styles.quickActionText}>Track Bus</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.quickActionButton}
+            onPress={() => router.push('/wallet')}
+          >
+            <View style={[styles.quickActionIcon, { backgroundColor: '#F0EEFF' }]}>
+              <Wallet size={24} color="#8a2abeff" />
+            </View>
+            <Text style={styles.quickActionText}>Wallet</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Upcoming Trip Card */}
         {upcomingTrip && (
           <View style={styles.sectionContainer}>
@@ -121,8 +186,8 @@ export default function HomeScreen() {
                 <Text style={styles.seeAllText}>See All</Text>
               </TouchableOpacity>
             </View>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
               style={styles.upcomingTripCard}
               onPress={() => router.push(`/tickets/${upcomingTrip.id}/detail`)}
             >
@@ -153,113 +218,124 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         )}
-        
-        {/* Quick Actions */}
-        <View style={styles.quickActionsContainer}>
-          <TouchableOpacity 
-            style={styles.quickActionButton}
-            onPress={() => router.push('/search')}
-          >
-            <View style={[styles.quickActionIcon, { backgroundColor: '#EBF2FF' }]}>
-              <Search size={24} color="#004CFF" />
-            </View>
-            <Text style={styles.quickActionText}>Find Routes</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.quickActionButton}
-            onPress={() => router.push('/tickets')}
-          >
-            <View style={[styles.quickActionIcon, { backgroundColor: '#FFF4EB' }]}>
-              <Ticket size={24} color="#FF8A00" />
-            </View>
-            <Text style={styles.quickActionText}>My Tickets</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.quickActionButton}
-            onPress={() => router.push('/tracking/input')}
-          >
-            <View style={[styles.quickActionIcon, { backgroundColor: '#EBFFF4' }]}>
-              <Bus size={24} color="#1DD724" />
-            </View>
-            <Text style={styles.quickActionText}>Track Bus</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.quickActionButton}
-            onPress={() => router.push('/wallet')}
-          >
-            <View style={[styles.quickActionIcon, { backgroundColor: '#F0EEFF' }]}>
-              <Image 
-                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/10613/10613983.png' }} 
-                style={{ width: 24, height: 24 }} 
-              />
-            </View>
-            <Text style={styles.quickActionText}>Wallet</Text>
-          </TouchableOpacity>
-        </View>
-        
-        {/* Alerts */}
-        {alerts.length > 0 && (
-          <View style={styles.alertsContainer}>
-            {alerts.map(alert => (
-              <View key={alert.id} style={styles.alertCard}>
-                <View style={styles.alertIconContainer}>
-                  <AlertTriangle size={24} color="#FF8A00" />
-                </View>
-                <View style={styles.alertContent}>
-                  <Text style={styles.alertTitle}>{alert.title}</Text>
-                  <Text style={styles.alertMessage}>{alert.message}</Text>
-                  <Text style={styles.alertTime}>{alert.time}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-        
-        {/* Recent Routes */}
+
+        {/* Recent Routes - Modernized */}
         {recentRoutes.length > 0 && (
           <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Recent Routes</Text>
-              <TouchableOpacity onPress={() => router.push('/profile/favorites')}>
+              <View style={styles.sectionTitleContainer}>
+                <Text style={styles.sectionTitle}>Recent Routes</Text>
+                <Text style={styles.sectionSubtitle}>Your frequently traveled routes</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.seeAllButton}
+                onPress={() => router.push('/profile/favorites')}
+              >
                 <Text style={styles.seeAllText}>See All</Text>
+                <ArrowRight size={16} color="#004CFF" />
               </TouchableOpacity>
             </View>
-            
+
             <View style={styles.recentRoutesContainer}>
-              {recentRoutes.map(route => (
+              {recentRoutes.slice(0, 3).map((route, index) => (
                 <TouchableOpacity 
                   key={route.id} 
-                  style={styles.recentRouteItem}
-                  onPress={() => router.push('/search/results')}
+                  style={styles.recentRouteCard}
+                  activeOpacity={0.7}
+                  onPress={() => handleRouteSearch(route)}
                 >
-                  <View style={styles.routePoints}>
-                    <View style={styles.routePointContainer}>
-                      <View style={[styles.routePointDot, { backgroundColor: '#004CFF' }]} />
-                      <Text style={styles.routePointText}>{route.from}</Text>
-                    </View>
-                    <View style={styles.routeLine} />
-                    <View style={styles.routePointContainer}>
-                      <View style={[styles.routePointDot, { backgroundColor: '#FF3831' }]} />
-                      <Text style={styles.routePointText}>{route.to}</Text>
+                  {/* Route Information */}
+                  <View style={styles.routeContent}>
+                    <View style={styles.locationContainer}>
+                      {/* Location labels above route path */}
+                      <View style={styles.locationLabels}>
+                        <Text style={styles.fromLocationLabel}>{route.from}</Text>
+                        <Text style={styles.toLocationLabel}>{route.to}</Text>
+                      </View>
+                      
+                      <View style={styles.routePathContainer}>
+                        <View style={styles.originDot} />
+                        <View style={styles.routeLine} />
+                        <View style={styles.routeIcon}>
+                          <Bus size={16} color="#6B7280" />
+                        </View>
+                        <View style={styles.routeLine} />
+                        <View style={styles.destinationDot} />
+                      </View>
+
+                      {/* Last Used Information */}
+                      <View style={styles.routeMetrics}>
+                        {/* <TouchableOpacity 
+                      style={styles.favoriteButton}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleToggleFavorite(route.id);
+                      }}
+                    >
+                      <Heart
+                        size={16}
+                        color={route.saved ? "#FF3831" : "#9CA3AF"}
+                        fill={route.saved ? "#FF3831" : "none"}
+                      />
+                    </TouchableOpacity> */}
+                        <View style={styles.metricItem}>
+                          <Clock size={14} color="#6B7280" />
+                          <Text style={styles.metricText}>
+                            Last used {route.lastUsed || (index === 0 ? '2 days ago' : index === 1 ? '1 week ago' : '2 weeks ago')}
+                          </Text>
+                        </View>
+                      </View>
                     </View>
                   </View>
-                  <View style={styles.routeActions}>
-                    <TouchableOpacity style={styles.routeActionIcon}>
-                      <Star size={18} color={route.saved ? "#FFB800" : "#9CA3AF"} fill={route.saved ? "#FFB800" : "none"} />
+
+                  {/* Action Button */}
+                  {/* <View style={styles.routeFooter}>
+                    <TouchableOpacity 
+                      style={styles.searchRouteButton}
+                      onPress={() => handleRouteSearch(route)}
+                    >
+                      <Search size={16} color="#004CFF" />
+                      <Text style={styles.searchRouteText}>Search This</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.routeActionSearch}>
-                      <Text style={styles.routeActionSearchText}>Search</Text>
+                    
+                    <TouchableOpacity 
+                      style={styles.favoriteButton}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleToggleFavorite(route.id);
+                      }}
+                    >
+                      <Heart
+                        size={20}
+                        color={route.saved ? "#FF3831" : "#9CA3AF"}
+                        fill={route.saved ? "#FF3831" : "none"}
+                      />
                     </TouchableOpacity>
-                  </View>
+                  </View> */}
                 </TouchableOpacity>
               ))}
+
+              {/* Add New Route Card */}
+              <TouchableOpacity
+                style={styles.addRouteCard}
+                onPress={() => router.push('/search')}
+                activeOpacity={0.7}
+              >
+                <View style={styles.addRouteIconContainer}>
+                  <View style={styles.addRouteIcon}>
+                    <Navigation size={24} color="#004CFF" />
+                  </View>
+                </View>
+                <View style={styles.addRouteContent}>
+                  <Text style={styles.addRouteTitle}>Find New Route</Text>
+                  <Text style={styles.addRouteSubtitle}>Discover new destinations</Text>
+                </View>
+                <ArrowRight size={20} color="#004CFF" />
+              </TouchableOpacity>
             </View>
           </View>
         )}
-        
+
         {/* Promotions */}
         <View style={styles.sectionContainer}>
           <View style={styles.sectionHeader}>
@@ -268,9 +344,9 @@ export default function HomeScreen() {
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
           </View>
-          
-          <ScrollView 
-            horizontal 
+
+          <ScrollView
+            horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.promoScrollContainer}
           >
@@ -289,13 +365,13 @@ export default function HomeScreen() {
             ))}
           </ScrollView>
         </View>
-        
+
         {/* Popular Routes */}
         <View style={[styles.sectionContainer, { marginBottom: 24 }]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Popular Routes</Text>
           </View>
-          
+
           <View style={styles.popularRoutesContainer}>
             <TouchableOpacity style={styles.popularRouteItem}>
               <View style={styles.popularRouteInfo}>
@@ -307,7 +383,7 @@ export default function HomeScreen() {
                 <ArrowUp size={16} color="#FF3831" />
               </View>
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.popularRouteItem}>
               <View style={styles.popularRouteInfo}>
                 <Text style={styles.popularRouteTitle}>Colombo - Galle</Text>
@@ -318,7 +394,7 @@ export default function HomeScreen() {
                 <ArrowDown size={16} color="#1DD724" />
               </View>
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.popularRouteItem}>
               <View style={styles.popularRouteInfo}>
                 <Text style={styles.popularRouteTitle}>Kandy - Nuwara Eliya</Text>
@@ -410,13 +486,30 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 16,
+  },
+  sectionTitleContainer: {
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#111827',
+    marginBottom: 2,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  seeAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    backgroundColor: '#F8FAFF',
   },
   seeAllText: {
     fontSize: 14,
@@ -508,6 +601,178 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
   },
+  // Updated Recent Routes Styles
+  recentRoutesContainer: {
+    gap: 16,
+  },
+  recentRouteCard: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+  },
+  routeContent: {
+    marginBottom: 16,
+  },
+  locationContainer: {
+    marginBottom: 12,
+  },
+  locationLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  fromLocationLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  toLocationLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  routePathContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  routeLine: {
+    flex: 1,
+    height: 2,
+    backgroundColor: '#E5E7EB',
+  },
+  routeIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 8,
+  },
+  originDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#004CFF',
+    shadowColor: '#004CFF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  destinationDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#FF3831',
+    shadowColor: '#FF3831',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  routeMetrics: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 6,
+    // paddingHorizontal: 12,
+  },
+  metricItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  metricText: {
+    fontSize: 14,
+    color: '#6B7280',
+    fontWeight: '500',
+  },
+  metricDivider: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#D1D5DB',
+  },
+  routeFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+    paddingTop: 16,
+  },
+  searchRouteButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    height: 48,
+    backgroundColor: '#F8FAFF',
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#E5EFFF',
+  },
+  searchRouteText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#004CFF',
+  },
+  favoriteButton: {
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  addRouteCard: {
+    backgroundColor: '#F8FAFF',
+    borderRadius: 20,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    borderWidth: 2,
+    borderColor: '#E5EFFF',
+    borderStyle: 'dashed',
+  },
+  addRouteIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addRouteIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: '#EBF2FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addRouteContent: {
+    flex: 1,
+  },
+  addRouteTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 2,
+  },
+  addRouteSubtitle: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  // Existing styles for other sections...
   alertsContainer: {
     marginTop: 24,
     paddingHorizontal: 24,
@@ -545,73 +810,6 @@ const styles = StyleSheet.create({
   alertTime: {
     fontSize: 12,
     color: '#9CA3AF',
-  },
-  recentRoutesContainer: {
-    gap: 12,
-  },
-  recentRouteItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  routePoints: {
-    flex: 1,
-  },
-  routePointContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  routePointDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-  },
-  routePointText: {
-    fontSize: 16,
-    color: '#111827',
-    fontWeight: '500',
-  },
-  routeLine: {
-    height: 20,
-    width: 2,
-    backgroundColor: '#E5E7EB',
-    marginLeft: 5,
-    marginVertical: 4,
-  },
-  routeActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  routeActionIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F3F4F6',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  routeActionSearch: {
-    height: 36,
-    paddingHorizontal: 16,
-    borderRadius: 18,
-    backgroundColor: '#004CFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  routeActionSearchText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: 'white',
   },
   promoScrollContainer: {
     paddingRight: 24,

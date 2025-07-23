@@ -15,6 +15,7 @@ import {
   ChevronRight
 } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
+import MockWalletService from '@/services/mockWalletService';
 
 // Custom Card SVG Component
 const TravelCardSVG = ({ balance, cardNumber, expiryDate, name, hidden }) => (
@@ -27,7 +28,7 @@ const TravelCardSVG = ({ balance, cardNumber, expiryDate, name, hidden }) => (
     <View style={styles.cardContent}>
       <Text style={styles.balanceLabel}>Balance</Text>
       <Text style={styles.balanceValue}>
-        {hidden ? '••••••' : `LKR ${balance}`}
+        {hidden ? '••••••' : `LKR ${balance.toLocaleString()}`}
       </Text>
     </View>
     
@@ -55,14 +56,22 @@ export default function WalletScreen() {
   const [hideBalance, setHideBalance] = useState(false);
   const { user } = useAuth();
   
-  // Use user's wallet data if available, or fallback to empty defaults
-  const walletData = user?.wallet || {
+  // Get wallet data using the service
+  const walletData = user?.email ? MockWalletService.getWalletByEmail(user.email) : null;
+  const recentTransactions = user?.email ? MockWalletService.getRecentTransactions(user.email, 5) : [];
+  const notificationSettings = user?.email ? MockWalletService.getNotificationSettings(user.email) : null;
+
+  // Fallback data if no wallet found
+  const defaultWalletData = {
     balance: 0,
-    cardNumber: '•••• •••• •••• ••••',
-    expiryDate: 'MM/YY',
-    name: 'GUEST USER',
-    recentTransactions: []
+    travelCard: {
+      cardNumber: '•••• •••• •••• ••••',
+      expiryDate: 'MM/YY',
+      holderName: 'GUEST USER'
+    }
   };
+
+  const currentWallet = walletData || defaultWalletData;
 
   const getStatusColor = (status) => {
     switch(status) {
@@ -77,16 +86,17 @@ export default function WalletScreen() {
     switch(type) {
       case 'topup': return <Plus size={16} color="#1DD724" />;
       case 'payment': return <Clock size={16} color="#004CFF" />;
+      case 'card-use': return <CreditCard size={16} color="#004CFF" />;
       default: return <History size={16} color="#6B7280" />;
     }
   };
 
   const getTransactionPrefix = (type) => {
-    return type === 'topup' ? '+' : '-';
+    return type === 'topup' || type === 'refund' ? '+' : '-';
   };
 
   const getTransactionColor = (type) => {
-    return type === 'topup' ? '#1DD724' : '#004CFF';
+    return type === 'topup' || type === 'refund' ? '#1DD724' : '#004CFF';
   };
 
   return (
@@ -116,10 +126,10 @@ export default function WalletScreen() {
       <ScrollView style={styles.content}>
         {/* Travel Card Section */}
         <TravelCardSVG 
-          balance={walletData.balance} 
-          cardNumber={walletData.cardNumber}
-          expiryDate={walletData.expiryDate}
-          name={walletData.name}
+          balance={currentWallet.balance} 
+          cardNumber={currentWallet.travelCard.cardNumber}
+          expiryDate={currentWallet.travelCard.expiryDate}
+          name={currentWallet.travelCard.holderName}
           hidden={hideBalance}
         />
 
@@ -179,7 +189,7 @@ export default function WalletScreen() {
             </TouchableOpacity>
           </View>
 
-          {walletData.recentTransactions.length === 0 ? (
+          {recentTransactions.length === 0 ? (
             <View style={styles.emptyState}>
               <Text style={styles.emptyStateTitle}>No transactions yet</Text>
               <Text style={styles.emptyStateSubtitle}>
@@ -187,14 +197,14 @@ export default function WalletScreen() {
               </Text>
             </View>
           ) : (
-            walletData.recentTransactions.map((transaction) => (
+            recentTransactions.map((transaction) => (
               <View key={transaction.id} style={styles.transactionItem}>
                 <View style={styles.transactionIconContainer}>
                   {getTransactionIcon(transaction.type)}
                 </View>
                 <View style={styles.transactionInfo}>
                   <Text style={styles.transactionTitle}>
-                    {transaction.title || (transaction.type === 'topup' ? 'Wallet Top-up' : 'Payment')}
+                    {transaction.title}
                   </Text>
                   <Text style={styles.transactionDate}>{transaction.date}</Text>
                 </View>
@@ -202,7 +212,7 @@ export default function WalletScreen() {
                   styles.transactionAmount,
                   { color: getTransactionColor(transaction.type) }
                 ]}>
-                  {getTransactionPrefix(transaction.type)}LKR {transaction.amount}
+                  {getTransactionPrefix(transaction.type)}LKR {transaction.amount.toLocaleString()}
                 </Text>
               </View>
             ))
@@ -210,24 +220,26 @@ export default function WalletScreen() {
         </View>
 
         {/* Notifications Section */}
-        <View style={styles.notificationsContainer}>
-          <View style={styles.notificationCard}>
-            <View style={styles.notificationIcon}>
-              <BellRing size={20} color="#004CFF" />
+        {notificationSettings && !notificationSettings.transactionAlerts && (
+          <View style={styles.notificationsContainer}>
+            <View style={styles.notificationCard}>
+              <View style={styles.notificationIcon}>
+                <BellRing size={20} color="#004CFF" />
+              </View>
+              <View style={styles.notificationContent}>
+                <Text style={styles.notificationTitle}>
+                  Enable notifications
+                </Text>
+                <Text style={styles.notificationText}>
+                  Get alerts for transactions, low balance, and promotions
+                </Text>
+              </View>
+              <TouchableOpacity style={styles.enableButton}>
+                <Text style={styles.enableButtonText}>Enable</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.notificationContent}>
-              <Text style={styles.notificationTitle}>
-                Enable notifications
-              </Text>
-              <Text style={styles.notificationText}>
-                Get alerts for transactions, low balance, and promotions
-              </Text>
-            </View>
-            <TouchableOpacity style={styles.enableButton}>
-              <Text style={styles.enableButtonText}>Enable</Text>
-            </TouchableOpacity>
           </View>
-        </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

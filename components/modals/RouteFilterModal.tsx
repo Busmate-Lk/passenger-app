@@ -348,7 +348,7 @@ export default function RouteFilterModal({
                     ]}
                     onPress={() => toggleDepartureTime(slot.id)}
                   >
-                    <Text style={styles.timeSlotIcon}>{slot.icon}</Text>
+                    {/* <Text style={styles.timeSlotIcon}>{slot.icon}</Text> */}
                     <Text style={[
                       styles.timeSlotLabel,
                       filterOptions.departureTime.includes(slot.id) && styles.timeSlotLabelSelected
@@ -766,7 +766,8 @@ const styles = StyleSheet.create({
   timeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    gap: 6,
+    // justifyContent: 'space-between',
   },
   timeSlot: {
     width: '32%',

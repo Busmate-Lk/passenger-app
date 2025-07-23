@@ -11,96 +11,35 @@ import {
   Check,
   X,
   CreditCard,
-  Bus
+  Bus,
+  RefreshCw
 } from 'lucide-react-native';
+import { useAuth } from '@/context/AuthContext';
+import MockWalletService from '@/services/mockWalletService';
 
 export default function HistoryScreen() {
   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const { user } = useAuth();
 
   const filters = [
     { id: 'all', label: 'All' },
-    { id: 'top-up', label: 'Top-ups' },
+    { id: 'topup', label: 'Top-ups' },
     { id: 'payment', label: 'Payments' },
     { id: 'card-use', label: 'Card Use' },
+    { id: 'refund', label: 'Refunds' },
   ];
 
-  // Mock transaction history data
-  const transactions = [
-    {
-      id: '1',
-      type: 'topup',
-      amount: 1000,
-      date: 'Today, 10:30 AM',
-      status: 'completed',
-      method: 'Credit Card',
-      reference: 'TXN123456789'
-    },
-    {
-      id: '2',
-      type: 'payment',
-      amount: 250,
-      date: 'Yesterday, 3:15 PM',
-      title: 'Bus Ticket - Colombo to Kandy',
-      status: 'completed',
-      reference: 'BKG987654321'
-    },
-    {
-      id: '3',
-      type: 'card-use',
-      amount: 50,
-      date: 'Jan 22, 2024',
-      title: 'Bus Fare - Route 138',
-      status: 'completed',
-      location: 'Galle Road, Colombo',
-      reference: 'CRD456789123'
-    },
-    {
-      id: '4',
-      type: 'payment',
-      amount: 180,
-      date: 'Jan 20, 2024',
-      title: 'Bus Ticket - Galle to Matara',
-      status: 'completed',
-      reference: 'BKG123789456'
-    },
-    {
-      id: '5',
-      type: 'topup',
-      amount: 500,
-      date: 'Jan 18, 2024',
-      status: 'failed',
-      method: 'Credit Card',
-      reference: 'TXN987321654',
-      error: 'Payment gateway timeout'
-    },
-    {
-      id: '6',
-      type: 'card-use',
-      amount: 30,
-      date: 'Jan 15, 2024',
-      title: 'Bus Fare - Route 101',
-      status: 'completed',
-      location: 'Kandy City Center',
-      reference: 'CRD789456123'
-    },
-    {
-      id: '7',
-      type: 'payment',
-      amount: 300,
-      date: 'Jan 12, 2024',
-      title: 'Bus Ticket - Colombo to Jaffna',
-      status: 'pending',
-      reference: 'BKG456123789'
-    },
-  ];
+  // Get transactions using the service
+  const allTransactions = user?.email ? MockWalletService.getAllTransactions(user.email) : [];
 
   const getFilteredTransactions = () => {
-    if (selectedFilter === 'all') return transactions;
-    if (selectedFilter === 'top-up') return transactions.filter(t => t.type === 'topup');
-    if (selectedFilter === 'payment') return transactions.filter(t => t.type === 'payment');
-    if (selectedFilter === 'card-use') return transactions.filter(t => t.type === 'card-use');
-    return transactions;
+    if (selectedFilter === 'all') return allTransactions;
+    if (selectedFilter === 'topup') return allTransactions.filter(t => t.type === 'topup');
+    if (selectedFilter === 'payment') return allTransactions.filter(t => t.type === 'payment');
+    if (selectedFilter === 'card-use') return allTransactions.filter(t => t.type === 'card-use');
+    if (selectedFilter === 'refund') return allTransactions.filter(t => t.type === 'refund');
+    return allTransactions;
   };
 
   const getStatusColor = (status) => {
@@ -120,18 +59,19 @@ export default function HistoryScreen() {
       case 'topup': return <Plus size={16} color="#1DD724" />;
       case 'payment': return <Bus size={16} color="#004CFF" />;
       case 'card-use': return <CreditCard size={16} color="#004CFF" />;
+      case 'refund': return <RefreshCw size={16} color="#1DD724" />;
       default: return <Clock size={16} color="#6B7280" />;
     }
   };
 
   const getTransactionPrefix = (type) => {
-    return (type === 'topup') ? '+' : '-';
+    return (type === 'topup' || type === 'refund') ? '+' : '-';
   };
 
   const getTransactionColor = (type, status) => {
     if (status === 'failed') return '#FF3831';
     if (status === 'pending') return '#F59E0B';
-    return type === 'topup' ? '#1DD724' : '#004CFF';
+    return (type === 'topup' || type === 'refund') ? '#1DD724' : '#004CFF';
   };
 
   const getStatusIndicator = (status) => {
@@ -174,7 +114,7 @@ export default function HistoryScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Transaction History</Text>
         <TouchableOpacity style={styles.filterIconButton}>
-          <Filter size={20} color="#FFFFFF" />
+          {/* <Filter size={20} color="#FFFFFF" /> */}
         </TouchableOpacity>
       </View>
 
@@ -233,13 +173,7 @@ export default function HistoryScreen() {
                     </View>
                     <View style={styles.transactionInfo}>
                       <Text style={styles.transactionTitle}>
-                        {transaction.title || (
-                          transaction.type === 'topup' 
-                            ? 'Wallet Top-up' 
-                            : transaction.type === 'card-use'
-                              ? 'Travel Card Usage'
-                              : 'Payment'
-                        )}
+                        {transaction.title}
                       </Text>
                       <Text style={styles.transactionTime}>
                         {transaction.date.includes(',') ? transaction.date.split(', ')[1] : transaction.date}
@@ -250,7 +184,7 @@ export default function HistoryScreen() {
                         styles.amountText,
                         { color: getTransactionColor(transaction.type, transaction.status) }
                       ]}>
-                        {getTransactionPrefix(transaction.type)}LKR {transaction.amount}
+                        {getTransactionPrefix(transaction.type)}LKR {transaction.amount.toLocaleString()}
                       </Text>
                       <View style={[
                         styles.statusIndicator, 
@@ -288,6 +222,13 @@ export default function HistoryScreen() {
                       <Text style={styles.detailLabel}>Reference</Text>
                       <Text style={styles.detailValue}>{transaction.reference}</Text>
                     </View>
+                    
+                    {transaction.description && (
+                      <View style={styles.detailRow}>
+                        <Text style={styles.detailLabel}>Description</Text>
+                        <Text style={styles.detailValue}>{transaction.description}</Text>
+                      </View>
+                    )}
                     
                     {transaction.error && (
                       <View style={styles.errorContainer}>
