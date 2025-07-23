@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
-import { StatusBar as ExpoStatusBar } from 'expo-status-bar'; // Keep for compatibility
-import { StatusBar, Platform, View } from 'react-native'; // Add React Native's StatusBar
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+import { StatusBar, Platform, View } from 'react-native';
 import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 import { useFonts } from 'expo-font';
 import {
@@ -10,13 +10,10 @@ import {
   Inter_600SemiBold,
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
-import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider } from '@/context/AuthContext';
 
-// Prevent auto-hiding of splash screen
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
+  const [appIsReady, setAppIsReady] = useState(false);
   useFrameworkReady();
 
   // Set status bar properties natively
@@ -36,12 +33,24 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
+    async function prepare() {
+      try {
+        // Wait for fonts to load
+        if (fontsLoaded || fontError) {
+          // Add any additional preparation here
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          setAppIsReady(true);
+        }
+      } catch (e) {
+        console.warn(e);
+        setAppIsReady(true);
+      }
     }
+
+    prepare();
   }, [fontsLoaded, fontError]);
 
-  if (!fontsLoaded && !fontError) {
+  if (!appIsReady) {
     return null;
   }
 
@@ -63,7 +72,6 @@ export default function RootLayout() {
         <Stack.Screen name="tracking" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
-      {/* Keep Expo StatusBar for iOS compatibility but hide it on Android */}
       {Platform.OS === 'ios' && <ExpoStatusBar style="light" />}
     </AuthProvider>
   );

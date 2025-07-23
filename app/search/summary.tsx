@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, MapPin, Calendar, Clock, Users, CreditCard, Download, Share } from 'lucide-react-native';
+import { MapPin, Calendar, Clock, Users, CreditCard, Download, Share } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
+import AppHeader from '../../components/ui/AppHeader';
 
 export default function SummaryScreen() {
   const router = useRouter();
@@ -30,15 +31,7 @@ export default function SummaryScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Booking Summary</Text>
-      </View>
+      <AppHeader title="Booking Summary" />
 
       <ScrollView style={styles.content}>
         {/* Status Card */}
@@ -162,27 +155,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   content: {
     flex: 1,

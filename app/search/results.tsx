@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Filter } from 'lucide-react-native';
+import { Filter } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
 import BusRouteCard, { RouteResult } from '../../components/BusRouteCard';
 import RouteFilterModal from '../../components/modals/RouteFilterModal';
 import mockData from '../../data/mockBusRouteData.json';
+import AppHeader from '../../components/ui/AppHeader';
 
 interface FilterOptionsType {
   priceRange: [number, number];
@@ -185,26 +186,24 @@ export default function SearchResultsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>{from} → {to}</Text>
-          <Text style={styles.headerSubtitle}>
-            {searchDate.toLocaleDateString()} • {passengers} passenger{passengers !== 1 ? 's' : ''}
-          </Text>
-        </View>
-        <TouchableOpacity
-          style={styles.filterButton}
-          onPress={() => setShowFilterModal(true)}
-        >
-          <Filter size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+      <AppHeader 
+        title={`${from} → ${to}`}
+        rightElement={
+          <TouchableOpacity
+            style={styles.filterButton}
+            onPress={() => setShowFilterModal(true)}
+          >
+            <Filter size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        }
+      />
+      
+      {/* Search Info */}
+      {/* <View style={styles.searchInfoContainer}>
+        <Text style={styles.searchInfoText}>
+          {searchDate.toLocaleDateString()} • {passengers} passenger{passengers !== 1 ? 's' : ''}
+        </Text>
+      </View> */}
 
       {/* Quick Filters */}
       <View style={styles.filtersContainer}>
@@ -274,35 +273,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F3F4F9',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+  searchInfoContainer: {
     backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
+    paddingHorizontal: 24,
+    paddingBottom: 16,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  headerContent: {
-    flex: 1,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  headerSubtitle: {
+  searchInfoText: {
     fontSize: 14,
     color: '#FFFFFF',
     opacity: 0.8,
-    marginTop: 2,
   },
   filterButton: {
     width: 40,

@@ -3,10 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, SafeAreaView } from 'react-na
 import { useRouter } from 'expo-router';
 import { StyleSheet } from 'react-native';
 import { 
-  ArrowLeft, 
   Plus, 
   Clock, 
-  Filter,
   TriangleAlert as AlertTriangle,
   Check,
   X,
@@ -16,11 +14,12 @@ import {
 } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
 import MockWalletService from '@/services/mockWalletService';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function HistoryScreen() {
   const router = useRouter();
-  const [selectedFilter, setSelectedFilter] = useState('all');
   const { user } = useAuth();
+  const [selectedFilter, setSelectedFilter] = useState('all');
 
   const filters = [
     { id: 'all', label: 'All' },
@@ -105,18 +104,7 @@ export default function HistoryScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Transaction History</Text>
-        <TouchableOpacity style={styles.filterIconButton}>
-          {/* <Filter size={20} color="#FFFFFF" /> */}
-        </TouchableOpacity>
-      </View>
+      <AppHeader title="Transaction History" />
 
       {/* Filter Tabs */}
       <View style={styles.filtersContainer}>
@@ -251,33 +239,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  filterIconButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   filtersContainer: {
     backgroundColor: 'white',

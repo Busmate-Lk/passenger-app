@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Image, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, QrCode, Download, Share, Calendar, Clock, MapPin, User, Phone, MessageCircle, TriangleAlert as AlertTriangle } from 'lucide-react-native';
+import { QrCode, Download, Share, Calendar, Clock, MapPin, User, Phone, MessageCircle, TriangleAlert as AlertTriangle } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 import { MockUserService } from '@/services/mockUserService';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function TicketDetailScreen() {
   const router = useRouter();
@@ -73,21 +74,17 @@ export default function TicketDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Ticket Details</Text>
-        <TouchableOpacity
-          onPress={() => router.push(`/tickets/${id}/qr`)}
-          style={styles.qrButton}
-        >
-          <QrCode size={20} color="#004CFF" />
-        </TouchableOpacity>
-      </View>
+      <AppHeader 
+        title="Ticket Details"
+        rightElement={
+          <TouchableOpacity
+            onPress={() => router.push(`/tickets/${id}/qr`)}
+            style={styles.qrButton}
+          >
+            <QrCode size={20} color="#004CFF" />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView style={styles.content}>
         {/* Ticket Card */}
@@ -273,27 +270,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   qrButton: {
     width: 40,

@@ -7,8 +7,6 @@ import {
   ScrollView,
   SafeAreaView,
   StyleSheet,
-  Platform,
-  StatusBar,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
@@ -16,11 +14,11 @@ import {
   Search as SearchIcon,
   Filter,
   ArrowRightLeft,
-  ArrowLeft,
   Clock,
 } from 'lucide-react-native';
 import RouteFilterModal from '../../components/modals/RouteFilterModal';
 import mockData from '../../data/mockBusRouteData.json';
+import AppHeader from '../../components/ui/AppHeader';
 
 interface FilterOptionsType {
   priceRange: [number, number];
@@ -128,24 +126,20 @@ export default function SearchScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
-
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Search Bus Routes</Text>
-        <TouchableOpacity
-          style={styles.filterButton}
-          onPress={() => setShowFilterModal(true)}
-        >
-          <Filter size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+      <AppHeader 
+        title="Search Bus Routes"
+        showBackButton={true}
+        rightElement={
+          <TouchableOpacity
+            style={styles.filterButton}
+            onPress={() => setShowFilterModal(true)}
+          >
+            <Filter size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        }
+        statusBarStyle="light-content"
+      />
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.sectionContainer}>
@@ -277,27 +271,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   filterButton: {
     width: 40,

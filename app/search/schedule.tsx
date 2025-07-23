@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, MapPin, Clock, Users, Wifi, Snowflake, Zap, Star, Phone, MessageCircle } from 'lucide-react-native';
+import { MapPin, Clock, Users, Wifi, Snowflake, Zap, Star, Phone, MessageCircle } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
 import mockData from '../../data/mockBusRouteData.json';
+import AppHeader from '../../components/ui/AppHeader';
 
 interface ScheduleData {
   id: string;
@@ -158,15 +159,7 @@ export default function ScheduleScreen() {
   if (!scheduleData) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <ArrowLeft size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Schedule Details</Text>
-        </View>
+        <AppHeader title="Schedule Details" />
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>Loading schedule details...</Text>
         </View>
@@ -181,15 +174,7 @@ export default function ScheduleScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Schedule Details</Text>
-      </View>
+      <AppHeader title="Schedule Details" />
 
       <ScrollView style={styles.content}>
         {/* Bus Info Card */}
@@ -467,27 +452,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   loadingContainer: {
     flex: 1,

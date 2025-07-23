@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, TextInput, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Lock, Shield, AlertTriangle, CreditCard, RefreshCw } from 'lucide-react-native';
+import { Lock, Shield, AlertTriangle, CreditCard, RefreshCw } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 import MockWalletService from '@/services/mockWalletService';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function BlockCardScreen() {
   const router = useRouter();
@@ -76,15 +77,7 @@ export default function BlockCardScreen() {
   if (!hasActiveCard) {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <ArrowLeft size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Block Travel Card</Text>
-        </View>
+        <AppHeader title="Block Travel Card" />
 
         <View style={styles.content}>
           <View style={styles.infoCard}>
@@ -128,15 +121,7 @@ export default function BlockCardScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Block Travel Card</Text>
-      </View>
+      <AppHeader title="Block Travel Card" />
 
       <ScrollView style={styles.content}>
         {/* Warning Card */}
@@ -328,27 +313,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   content: {
     flex: 1,

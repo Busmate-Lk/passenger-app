@@ -4,7 +4,7 @@
     "slug": "busmate-passenger-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/busmate-icon-inverted.png",
+    "icon": "./assets/images/Busmate-lk-icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -39,7 +39,7 @@
     "android": {
       "package": "com.kavindadimuthu.busmatepassengerapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/busmate-round-icon.png",
+        "foregroundImage": "./assets/images/Busmate-lk-icon.png",
         "backgroundColor": "#004CFF"
       },
       "softwareKeyboardLayoutMode": "pan",

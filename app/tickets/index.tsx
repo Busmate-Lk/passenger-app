@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, Calendar, Clock, MapPin, QrCode, MoveVertical as MoreVertical, Filter } from 'lucide-react-native';
+import { Calendar, Clock, MapPin, QrCode, MoveVertical as MoreVertical, Filter } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 import { MockUserService } from '@/services/mockUserService';
+import AppHeader from '@/components/ui/AppHeader';
 
 interface Ticket {
   id: string;
@@ -64,18 +65,14 @@ export default function TicketsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>My Tickets</Text>
-        <TouchableOpacity style={styles.filterButton}>
-          <Filter size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+      <AppHeader 
+        title="My Tickets"
+        rightElement={
+          <TouchableOpacity style={styles.filterButton}>
+            <Filter size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        }
+      />
 
       {/* Filter Tabs */}
       <View style={styles.filtersContainer}>
@@ -206,27 +203,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   filterButton: {
     width: 40,

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StyleSheet } from 'react-native';
 import { 
-  ArrowLeft, 
   Plus, 
   EyeOff, 
   Eye, 
@@ -16,6 +15,7 @@ import {
 } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
 import MockWalletService from '@/services/mockWalletService';
+import AppHeader from '@/components/ui/AppHeader';
 
 // Custom Card SVG Component
 const TravelCardSVG = ({ balance, cardNumber, expiryDate, name, hidden }) => (
@@ -101,27 +101,23 @@ export default function WalletScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#004CFF" />
-      
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Wallet & Travel Card</Text>
-        <TouchableOpacity
-          onPress={() => setHideBalance(!hideBalance)}
-          style={styles.visibilityButton}
-        >
-          {hideBalance ? 
-            <Eye size={20} color="#FFFFFF" /> : 
-            <EyeOff size={20} color="#FFFFFF" />
-          }
-        </TouchableOpacity>
-      </View>
+      <AppHeader 
+        title="Wallet & Travel Card"
+        showBackButton={true}
+        rightElement={
+          <TouchableOpacity
+            onPress={() => setHideBalance(!hideBalance)}
+            style={styles.visibilityButton}
+          >
+            {hideBalance ? 
+              <Eye size={20} color="#FFFFFF" /> : 
+              <EyeOff size={20} color="#FFFFFF" />
+            }
+          </TouchableOpacity>
+        }
+        statusBarStyle="light-content"
+      />
 
       <ScrollView style={styles.content}>
         {/* Travel Card Section */}
@@ -249,27 +245,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   visibilityButton: {
     width: 40,

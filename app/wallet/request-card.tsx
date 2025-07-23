@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, TextInput, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ArrowLeft, CreditCard, User, Home, Phone, FileText, Check, RefreshCw, AlertTriangle } from 'lucide-react-native';
+import { CreditCard, User, Home, Phone, FileText, Check, RefreshCw, AlertTriangle } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
 import { useAuth } from '@/context/AuthContext';
 import MockWalletService from '@/services/mockWalletService';
 import mockUserData from '@/data/mockUserData.json';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function RequestCardScreen() {
   const router = useRouter();
@@ -153,23 +154,36 @@ export default function RequestCardScreen() {
     return true;
   };
 
-  // Check if user already has a card
-  if (hasActiveCard) {
+  // Handle existing card check
+  if (existingCardRequest && existingCardRequest.status === 'pending') {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <ArrowLeft size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Request Travel Card</Text>
+        <AppHeader title="Request Travel Card" />
+        
+        <View style={styles.content}>
+          <View style={styles.statusCard}>
+            <Text style={styles.statusTitle}>Request Already Submitted</Text>
+            <Text style={styles.statusText}>
+              You have a pending travel card request.
+            </Text>
+            <Text style={styles.trackingText}>
+              Request ID: {existingCardRequest.requestId}
+            </Text>
+          </View>
         </View>
+      </SafeAreaView>
+    );
+  }
 
+  // Handle existing active card
+  if (walletData?.travelCard?.status === 'active') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <AppHeader title="Request Travel Card" />
+        
         <View style={styles.content}>
           <View style={styles.warningCard}>
-            <AlertTriangle size={24} color="#F59E0B" />
+            <AlertTriangle size={24} color="#92400E" />
             <View style={styles.warningContent}>
               <Text style={styles.warningTitle}>Card Already Active</Text>
               <Text style={styles.warningText}>
@@ -192,29 +206,19 @@ export default function RequestCardScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Request Travel Card</Text>
-      </View>
+      <AppHeader title="Request Travel Card" />
 
       <ScrollView style={styles.content}>
         {/* Existing Request Status */}
-        {existingCardRequest && existingCardRequest.status !== 'delivered' && (
+        {existingCardRequest && existingCardRequest.status === 'approved' && (
           <View style={styles.statusCard}>
-            <Text style={styles.statusTitle}>Existing Request</Text>
+            <Text style={styles.statusTitle}>Request Approved</Text>
             <Text style={styles.statusText}>
-              You have a {existingCardRequest.status} card request from {existingCardRequest.requestDate}.
+              Your travel card request has been approved and is being processed for delivery.
             </Text>
-            {existingCardRequest.trackingNumber && (
-              <Text style={styles.trackingText}>
-                Tracking: {existingCardRequest.trackingNumber}
-              </Text>
-            )}
+            <Text style={styles.trackingText}>
+              Expected delivery: {existingCardRequest.estimatedDelivery}
+            </Text>
           </View>
         )}
 
@@ -459,27 +463,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   content: {
     flex: 1,

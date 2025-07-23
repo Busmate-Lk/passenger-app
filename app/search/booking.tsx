@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, TextInput } fro
 import { useRouter } from 'expo-router';
 import { ArrowLeft, User, Phone, MapPin, Calendar, Clock, Plus, UserPlus } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
+import AppHeader from '@/components/ui/AppHeader';
 
 interface Passenger {
   id: string;
@@ -55,19 +56,10 @@ export default function BookingScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Booking Details</Text>
-      </View>
+      <AppHeader title="Booking Details" />
 
       <ScrollView style={styles.content}>
-        {/* Trip Summary */}
+        {/* Trip Summary Card */}
         <View style={styles.summaryCard}>
           <Text style={styles.sectionTitle}>Trip Summary</Text>
           <View style={styles.tripDetails}>
@@ -231,27 +223,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F3F4F9',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   content: {
     flex: 1,

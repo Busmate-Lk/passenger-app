@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { ArrowLeft, Download, Share, Maximize2 } from 'lucide-react-native';
+import { Download, Share, Maximize2 } from 'lucide-react-native';
 import { StyleSheet } from 'react-native';
+import AppHeader from '@/components/ui/AppHeader';
 
 export default function QRCodeScreen() {
   const router = useRouter();
@@ -42,21 +43,17 @@ export default function QRCodeScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: brightness > 0.8 ? 'white' : '#F3F4F9' }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <ArrowLeft size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>QR Code</Text>
-        <TouchableOpacity
-          onPress={() => setBrightness(brightness > 0.8 ? 0.3 : 1)}
-          style={styles.brightnessButton}
-        >
-          <Maximize2 size={20} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+      <AppHeader 
+        title="QR Code"
+        rightElement={
+          <TouchableOpacity
+            onPress={() => setBrightness(brightness > 0.8 ? 0.3 : 1)}
+            style={styles.brightnessButton}
+          >
+            <Maximize2 size={20} color="#FFFFFF" />
+          </TouchableOpacity>
+        }
+      />
 
       <View style={styles.content}>
         {/* Ticket Info */}
@@ -128,27 +125,6 @@ export default function QRCodeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    backgroundColor: '#004CFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#003CC7',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
   },
   brightnessButton: {
     width: 40,
